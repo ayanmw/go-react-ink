@@ -36,14 +36,14 @@
 ## Phase 3: 组件与 Hooks
 
 ### 3.1 基础组件
-- [ ] Box 组件
-- [ ] Text 组件
-- [ ] Spacer 组件
-- [ ] Newline 组件
+- [x] Box 组件
+- [x] Text 组件
+- [x] Spacer 组件
+- [x] Newline 组件
 
 ### 3.2 高级组件
-- [ ] Static 组件
-- [ ] Transform 组件
+- [x] Static 组件
+- [x] Transform 组件
 
 ### 3.3 核心 Hooks
 - [ ] useState
@@ -115,8 +115,8 @@
 |-------|--------|------|------|
 | Phase 1 | 20 | 20 | 100% |
 | Phase 2 | 25 | 12 | 48% |
-| Phase 3 | 15 | 0 | 0% |
+| Phase 3 | 15 | 6 | 40% |
 | Phase 4 | 10 | 0 | 0% |
 | Phase 5 | 10 | 0 | 0% |
 | Phase 6 | 10 | 0 | 0% |
-| **Total** | **90** | **32** | **35.6%** |
+| **Total** | **90** | **38** | **42.2%** |
