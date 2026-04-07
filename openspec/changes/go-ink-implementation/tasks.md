@@ -52,12 +52,12 @@
 - [x] useMemo
 
 ### 3.4 专用 Hooks
-- [ ] useInput
-- [ ] useApp
-- [ ] useFocus
-- [ ] useFocusManager
-- [ ] useCursor
-- [ ] useAnimation
+- [x] useInput
+- [x] useApp
+- [x] useFocus
+- [x] useFocusManager
+- [x] useCursor
+- [x] useAnimation
 
 ## Phase 4: Flexbox Go 实现
 
@@ -115,8 +115,8 @@
 |-------|--------|------|------|
 | Phase 1 | 20 | 20 | 100% |
 | Phase 2 | 25 | 12 | 48% |
-| Phase 3 | 15 | 10 | 67% |
+| Phase 3 | 15 | 15 | 100% |
 | Phase 4 | 10 | 0 | 0% |
 | Phase 5 | 10 | 0 | 0% |
 | Phase 6 | 10 | 0 | 0% |
-| **Total** | **90** | **42** | **46.7%** |
+| **Total** | **90** | **47** | **52.2%** |
