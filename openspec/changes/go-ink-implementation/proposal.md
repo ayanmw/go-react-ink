@@ -7,7 +7,7 @@
 ## Status
 
 - [x] Design Complete
-- [ ] Implementation In Progress
+- [x] Implementation In Progress
 - [ ] Testing Complete
 - [ ] Released
 
