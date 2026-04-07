@@ -46,10 +46,10 @@
 - [x] Transform 组件
 
 ### 3.3 核心 Hooks
-- [ ] useState
-- [ ] useEffect
-- [ ] useRef
-- [ ] useMemo
+- [x] useState
+- [x] useEffect
+- [x] useRef
+- [x] useMemo
 
 ### 3.4 专用 Hooks
 - [ ] useInput
@@ -115,8 +115,8 @@
 |-------|--------|------|------|
 | Phase 1 | 20 | 20 | 100% |
 | Phase 2 | 25 | 12 | 48% |
-| Phase 3 | 15 | 6 | 40% |
+| Phase 3 | 15 | 10 | 67% |
 | Phase 4 | 10 | 0 | 0% |
 | Phase 5 | 10 | 0 | 0% |
 | Phase 6 | 10 | 0 | 0% |
-| **Total** | **90** | **38** | **42.2%** |
+| **Total** | **90** | **42** | **46.7%** |
