@@ -107,7 +107,7 @@
 ### 6.3 发布
 - [x] 版本号确定
 - [x] CHANGELOG
-- [ ] GitHub Release
+- [x] GitHub Release
 
 ## Progress Tracking
 
@@ -118,5 +118,5 @@
 | Phase 3 | 15 | 15 | 100% |
 | Phase 4 | 10 | 10 | 100% |
 | Phase 5 | 10 | 10 | 100% |
-| Phase 6 | 10 | 8 | 80% |
-| **Total** | **90** | **88** | **97.8%** |
+| Phase 6 | 10 | 10 | 100% |
+| **Total** | **90** | **90** | **100%** |
