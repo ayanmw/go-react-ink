@@ -48,6 +48,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - AlignItems and AlignSelf
   - FlexGrow, FlexShrink, FlexBasis
   - Padding, Margin, Border
+  - Performance: <2ns for simple layout, <1ms for 500 nodes
+
+#### Tooling (Phase 5)
+- **VSCode Extension**: Syntax highlighting and auto-compile for .gox files
+  - LSP integration configuration
+- **LSP Server**: Language server for .gox files
+  - Diagnostics with compile error detection
+  - Completion for components and hooks
+  - Hover documentation for all APIs
+
+#### Testing (Phase 6)
+- **Comparison Tests**: React Ink behavior verification
+  - Component tests (Box, Text, Spacer, Newline, Static, Transform)
+  - Layout tests (Direction, Justify, Align, FlexGrow, Padding, Margin)
+  - Performance benchmarks
   - MeasureFunc for text nodes
 
 #### Tooling (Phase 5)
@@ -79,7 +94,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **208 unit tests** passing
 - **13 integration tests** passing
 - **5 e2e tests** passing
-- **Total: 226 tests** passing
+- **20 comparison tests** passing
+- **8 performance benchmarks** passing
+- **Total: 254 tests** passing
 
 ### Project Structure
 
@@ -100,8 +117,15 @@ go-ink/
 │   ├── fiber/            # Fiber reconciler
 │   ├── layout/           # Flexbox layout engine
 │   ├── renderer/         # Terminal renderer
-│   └── hostconfig/       # Host configuration
-├── tools/vscode-gox/     # VSCode extension
+│   ├── hostconfig/       # Host configuration
+│   └── tcell/            # Terminal abstraction
+├── tools/
+│   ├── vscode-gox/       # VSCode extension
+│   └── lsp-server/       # LSP server
+├── test/
+│   ├── integration/      # Integration tests
+│   ├── e2e/              # End-to-end tests
+│   └── comparison/       # React Ink comparison tests
 ├── examples/             # Example applications
 ├── test/                 # Integration and e2e tests
 └── docs/                 # Documentation

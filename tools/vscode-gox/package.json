@@ -67,6 +67,16 @@
           "type": "string",
           "default": "ink",
           "description": "Default component package name"
+        },
+        "gox.lsp.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable LSP features (completion, hover, diagnostics)"
+        },
+        "gox.lsp.path": {
+          "type": "string",
+          "default": "gox-lsp",
+          "description": "Path to the GoX LSP server executable"
         }
       }
     }
