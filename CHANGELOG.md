@@ -49,7 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Hooks (Phase 3)
 - **Core Hooks**: useState, useEffect, useLayoutEffect, useRef, useMemo, useCallback
-- **Input Hooks**: useInput, useApp, useFocus, useFocusManager, useCursor, useAnimation, useStdout
+- **Input Hooks**: useInput, useApp, useFocus, useFocusManager, useCursor, useAnimation, useStdout, useStdin, useStderr, useWindowSize, useBoxMetrics, usePaste, useIsScreenReaderEnabled
 
 #### Layout Engine (Phase 4)
 - **Flexbox**: Pure Go implementation

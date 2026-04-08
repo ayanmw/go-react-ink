@@ -88,6 +88,12 @@ curl -s https://api.github.com/repos/vadimdemedes/ink/compare/{old_commit}...{ne
 | `useCursor` | v0.1.0 | ✅ 实现 |
 | `useAnimation` | v0.1.0 | ✅ 实现 |
 | `useStdout` | v0.1.0 | ✅ 实现 |
+| `useStdin` | v0.1.0 | ✅ 实现 |
+| `useStderr` | v0.1.0 | ✅ 实现 |
+| `useWindowSize` | v0.1.0 | ✅ 实现 |
+| `useBoxMetrics` | v0.1.0 | ✅ 实现 |
+| `usePaste` | v0.1.0 | ✅ 实现 |
+| `useIsScreenReaderEnabled` | v0.1.0 | ✅ 实现 |
 
 ### 布局属性
 
@@ -112,8 +118,6 @@ curl -s https://api.github.com/repos/vadimdemedes/ink/compare/{old_commit}...{ne
 
 | 特性 | 原因 | 计划版本 |
 |------|------|----------|
-| `useMeasure` | 需要终端尺寸测量 | v0.2.0 |
-| `useStdin` | 需要标准输入处理 | v0.2.0 |
 | 完整的 tcell 集成 | 网络问题导致依赖无法下载 | v0.2.0 |
 
 ### 实现差异

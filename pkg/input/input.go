@@ -329,12 +329,255 @@ func UseStdout(ctx *hooks.HookContext) *StdoutHook {
 	}
 }
 
-// Width 获取宽度
+// Width 返回宽度
 func (h *StdoutHook) Width() int {
 	return h.width
 }
 
-// Height 获取高度
+// Height 返回高度
 func (h *StdoutHook) Height() int {
 	return h.height
 }
+
+// SetSize 设置尺寸
+func (h *StdoutHook) SetSize(width, height int) {
+	h.width = width
+	h.height = height
+}
+
+// StdinHook 标准输入 Hook
+type StdinHook struct {
+	context   *hooks.HookContext
+	isTTY     bool
+	isRaw     bool
+	callbacks []func(string)
+	mu        sync.RWMutex
+}
+
+// UseStdin 标准输入 Hook
+func UseStdin(ctx *hooks.HookContext) *StdinHook {
+	return &StdinHook{
+		context: ctx,
+		isTTY:   true,
+		isRaw:   false,
+	}
+}
+
+// IsTTY 返回是否为 TTY
+func (h *StdinHook) IsTTY() bool {
+	return h.isTTY
+}
+
+// SetRaw 设置原始模式
+func (h *StdinHook) SetRaw(raw bool) {
+	h.isRaw = raw
+}
+
+// IsRaw 返回是否为原始模式
+func (h *StdinHook) IsRaw() bool {
+	return h.isRaw
+}
+
+// OnData 注册数据回调
+func (h *StdinHook) OnData(callback func(string)) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	h.callbacks = append(h.callbacks, callback)
+}
+
+// EmitData 触发数据
+func (h *StdinHook) EmitData(data string) {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+	for _, cb := range h.callbacks {
+		cb(data)
+	}
+}
+
+// StderrHook 标准错误 Hook
+type StderrHook struct {
+	width  int
+	height int
+}
+
+// UseStderr 标准错误 Hook
+func UseStderr(ctx *hooks.HookContext) *StderrHook {
+	return &StderrHook{
+		width:  80,
+		height: 24,
+	}
+}
+
+// Width 返回宽度
+func (h *StderrHook) Width() int {
+	return h.width
+}
+
+// Height 返回高度
+func (h *StderrHook) Height() int {
+	return h.height
+}
+
+// WindowSize 窗口尺寸
+type WindowSize struct {
+	Columns int
+	Rows    int
+}
+
+// WindowSizeHook 窗口尺寸 Hook
+type WindowSizeHook struct {
+	size    WindowSize
+	context *hooks.HookContext
+	mu      sync.RWMutex
+}
+
+// UseWindowSize 窗口尺寸 Hook
+func UseWindowSize(ctx *hooks.HookContext) *WindowSizeHook {
+	return &WindowSizeHook{
+		size: WindowSize{
+			Columns: 80,
+			Rows:    24,
+		},
+		context: ctx,
+	}
+}
+
+// Size 返回尺寸
+func (h *WindowSizeHook) Size() WindowSize {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+	return h.size
+}
+
+// SetSize 设置尺寸
+func (h *WindowSizeHook) SetSize(columns, rows int) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	h.size.Columns = columns
+	h.size.Rows = rows
+}
+
+// Columns 返回列数
+func (h *WindowSizeHook) Columns() int {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+	return h.size.Columns
+}
+
+// Rows 返回行数
+func (h *WindowSizeHook) Rows() int {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+	return h.size.Rows
+}
+
+// BoxMetrics 盒子尺寸信息
+type BoxMetrics struct {
+	Width       float64
+	Height      float64
+	Left        float64
+	Top         float64
+	HasMeasured bool
+}
+
+// BoxMetricsHook 盒子尺寸 Hook
+type BoxMetricsHook struct {
+	metrics BoxMetrics
+	context *hooks.HookContext
+	mu      sync.RWMutex
+}
+
+// UseBoxMetrics 盒子尺寸 Hook
+// 用于获取元素的布局信息 (类似 React Ink 的 useBoxMetrics)
+func UseBoxMetrics(ctx *hooks.HookContext) *BoxMetricsHook {
+	return &BoxMetricsHook{
+		metrics: BoxMetrics{
+			Width:       0,
+			Height:      0,
+			Left:        0,
+			Top:         0,
+			HasMeasured: false,
+		},
+		context: ctx,
+	}
+}
+
+// Metrics 返回尺寸信息
+func (h *BoxMetricsHook) Metrics() BoxMetrics {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+	return h.metrics
+}
+
+// SetMetrics 设置尺寸信息
+func (h *BoxMetricsHook) SetMetrics(width, height, left, top float64) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	h.metrics.Width = width
+	h.metrics.Height = height
+	h.metrics.Left = left
+	h.metrics.Top = top
+	h.metrics.HasMeasured = true
+}
+
+// SetHasMeasured 设置是否已测量
+func (h *BoxMetricsHook) SetHasMeasured(measured bool) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	h.metrics.HasMeasured = measured
+}
+
+// PasteHook 粘贴 Hook
+type PasteHook struct {
+	context   *hooks.HookContext
+	callbacks []func(string)
+	mu        sync.RWMutex
+}
+
+// UsePaste 粘贴 Hook
+func UsePaste(ctx *hooks.HookContext) *PasteHook {
+	return &PasteHook{
+		context: ctx,
+	}
+}
+
+// OnPaste 注册粘贴回调
+func (h *PasteHook) OnPaste(callback func(string)) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	h.callbacks = append(h.callbacks, callback)
+}
+
+// EmitPaste 触发粘贴
+func (h *PasteHook) EmitPaste(text string) {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+	for _, cb := range h.callbacks {
+		cb(text)
+	}
+}
+
+// ScreenReaderHook 屏幕阅读器 Hook
+type ScreenReaderHook struct {
+	enabled bool
+	context *hooks.HookContext
+}
+
+// UseIsScreenReaderEnabled 屏幕阅读器 Hook
+func UseIsScreenReaderEnabled(ctx *hooks.HookContext) *ScreenReaderHook {
+	return &ScreenReaderHook{
+		enabled: false,
+		context: ctx,
+	}
+}
+
+// IsEnabled 返回是否启用
+func (h *ScreenReaderHook) IsEnabled() bool {
+	return h.enabled
+}
+
+// SetEnabled 设置是否启用
+func (h *ScreenReaderHook) SetEnabled(enabled bool) {
+	h.enabled = enabled
+}
+
