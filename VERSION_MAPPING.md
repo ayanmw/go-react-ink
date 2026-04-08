@@ -8,6 +8,66 @@
 |------|------|-------------|----------|
 | **Go-React-Ink** | v0.1.0 | - | 2026-04-08 |
 | **React Ink** | v6.8.0 | `be1b1bb6ec65056e2ed60ef3c5ae642704b82d31` | 2025-01 |
+| **Go** | 1.22 | - | - |
+| **tcell** | v2.7.4 | - | 2024-02 |
+
+## Go 与 tcell 版本要求
+
+### 当前配置
+
+- **Go**: 1.22 (兼容性最佳)
+- **tcell**: v2.7.4 (支持 Go 1.12+)
+
+### tcell 版本与 Go 要求对照
+
+| tcell 版本 | 最低 Go 版本 | 推荐 |
+|-----------|-------------|------|
+| v2.7.4 及以下 | go 1.12 | ✅ 当前使用 |
+| v2.8.0 - v2.8.1 | go 1.12 | ✅ 可选升级 |
+| v2.9.0 | go 1.23 | ⚠️ 需升级 Go |
+| v2.10.0+ | go 1.24 | ⚠️ 需升级 Go |
+| v2.13.8 (最新) | go 1.24 | ⚠️ 需升级 Go |
+
+### 升级 tcell 的步骤
+
+如需升级 tcell 到 v2.9.0+，需要同步升级项目 Go 版本：
+
+1. **升级 Go 版本**
+   ```bash
+   # 方式1: 使用 go.mod 工具链指令
+   # go.mod 中设置: go 1.24
+
+   # 方式2: 安装 Go 1.24
+   # Windows: https://go.dev/dl/
+   # 或使用: go install golang.org/toolchain@go1.24.0
+   ```
+
+2. **更新 go.mod**
+   ```go
+   go 1.24
+
+   require (
+       github.com/gdamore/tcell/v2 v2.13.8
+       // ...
+   )
+   ```
+
+3. **更新依赖**
+   ```bash
+   go mod tidy
+   go build ./...
+   go test ./...
+   ```
+
+4. **更新 CI 配置**
+   - `.github/workflows/*.yml` 中的 Go 版本
+   - `VERSION_MAPPING.md` 版本记录
+
+### 注意事项
+
+- 项目通过 `pkg/tcell/tcell.go` 定义了 tcell 兼容的抽象接口
+- tcell 作为可选依赖，升级不影响核心功能
+- 升级 Go 版本需考虑用户兼容性
 
 ## React Ink 版本历史
 
@@ -118,7 +178,7 @@ curl -s https://api.github.com/repos/vadimdemedes/ink/compare/{old_commit}...{ne
 
 | 特性 | 原因 | 计划版本 |
 |------|------|----------|
-| 完整的 tcell 集成 | 网络问题导致依赖无法下载 | v0.2.0 |
+| tcell 实际集成 | 已定义抽象接口，待集成实现 | v0.2.0 |
 
 ### 实现差异
 
