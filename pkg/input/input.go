@@ -9,25 +9,25 @@ import (
 
 // Key 输入键
 type Key struct {
-	Name      string
-	Sequence  string
-	Shift     bool
-	Ctrl      bool
-	Alt       bool
-	Meta      bool
+	Name     string
+	Sequence string
+	Shift    bool
+	Ctrl     bool
+	Alt      bool
+	Meta     bool
 }
 
-// InputHook 输入 Hook
-type InputHook struct {
-	context   *hooks.HookContext
-	handlers  map[string]func(Key) // key name -> handler
+// Hook 输入 Hook
+type Hook struct {
+	context    *hooks.HookContext
+	handlers   map[string]func(Key) // key name -> handler
 	allHandler func(Key)
-	mu        sync.RWMutex
+	mu         sync.RWMutex
 }
 
 // UseInput 输入 Hook
-func UseInput(ctx *hooks.HookContext, handler func(Key)) *InputHook {
-	inputHook := &InputHook{
+func UseInput(ctx *hooks.HookContext, handler func(Key)) *Hook {
+	inputHook := &Hook{
 		context:    ctx,
 		handlers:   make(map[string]func(Key)),
 		allHandler: handler,
@@ -36,14 +36,14 @@ func UseInput(ctx *hooks.HookContext, handler func(Key)) *InputHook {
 }
 
 // Handle 注册特定键处理
-func (h *InputHook) Handle(keyName string, handler func(Key)) {
+func (h *Hook) Handle(keyName string, handler func(Key)) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 	h.handlers[keyName] = handler
 }
 
 // ProcessKey 处理输入键
-func (h *InputHook) ProcessKey(key Key) {
+func (h *Hook) ProcessKey(key Key) {
 	h.mu.RLock()
 	defer h.mu.RUnlock()
 
@@ -124,7 +124,7 @@ func UseFocusWithEvents(ctx *hooks.HookContext, onFocus func(), onBlur func()) (
 // FocusManager 焦点管理器
 type FocusManager struct {
 	focusables map[string]bool
-	activeId   string
+	activeID   string
 	mu         sync.RWMutex
 }
 
@@ -139,14 +139,14 @@ func UseFocusManager(ctx *hooks.HookContext) *FocusManager {
 func (m *FocusManager) Focus(id string) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	m.activeId = id
+	m.activeID = id
 }
 
 // Blur 取消焦点
 func (m *FocusManager) Blur() {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	m.activeId = ""
+	m.activeID = ""
 }
 
 // FocusNext 聚焦下一个
@@ -164,15 +164,15 @@ func (m *FocusManager) FocusNext() {
 		return
 	}
 
-	if m.activeId == "" {
-		m.activeId = ids[0]
+	if m.activeID == "" {
+		m.activeID = ids[0]
 		return
 	}
 
 	for i, id := range ids {
-		if id == m.activeId {
+		if id == m.activeID {
 			next := (i + 1) % len(ids)
-			m.activeId = ids[next]
+			m.activeID = ids[next]
 			return
 		}
 	}
@@ -192,15 +192,15 @@ func (m *FocusManager) FocusPrev() {
 		return
 	}
 
-	if m.activeId == "" {
-		m.activeId = ids[len(ids)-1]
+	if m.activeID == "" {
+		m.activeID = ids[len(ids)-1]
 		return
 	}
 
 	for i, id := range ids {
-		if id == m.activeId {
+		if id == m.activeID {
 			prev := (i - 1 + len(ids)) % len(ids)
-			m.activeId = ids[prev]
+			m.activeID = ids[prev]
 			return
 		}
 	}
@@ -224,7 +224,7 @@ func (m *FocusManager) Unregister(id string) {
 func (m *FocusManager) IsFocused(id string) bool {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-	return m.activeId == id
+	return m.activeID == id
 }
 
 // CursorHook 光标 Hook
@@ -265,10 +265,10 @@ func (h *CursorHook) SetShape(shape string) {
 
 // AnimationHook 动画 Hook
 type AnimationHook struct {
-	frame    int
-	playing  bool
-	fps      int
-	context  *hooks.HookContext
+	frame   int
+	playing bool
+	fps     int
+	context *hooks.HookContext
 }
 
 // UseAnimation 动画 Hook

@@ -23,14 +23,14 @@ type Screen interface {
 
 // Style 样式
 type Style struct {
-	fg       Color
-	bg       Color
-	bold     bool
-	italic   bool
+	fg        Color
+	bg        Color
+	bold      bool
+	italic    bool
 	underline bool
-	dim      bool
-	blink    bool
-	reverse  bool
+	dim       bool
+	blink     bool
+	reverse   bool
 }
 
 // NewStyle 创建新样式
@@ -90,15 +90,24 @@ func (s Style) Reverse(on bool) Style {
 type Color int32
 
 const (
+	// ColorDefault uses default color
 	ColorDefault Color = -1
-	ColorBlack   Color = 0
-	ColorRed     Color = 1
-	ColorGreen   Color = 2
-	ColorYellow  Color = 3
-	ColorBlue    Color = 4
+	// ColorBlack is black color
+	ColorBlack Color = 0
+	// ColorRed is red color
+	ColorRed Color = 1
+	// ColorGreen is green color
+	ColorGreen Color = 2
+	// ColorYellow is yellow color
+	ColorYellow Color = 3
+	// ColorBlue is blue color
+	ColorBlue Color = 4
+	// ColorMagenta is magenta color
 	ColorMagenta Color = 5
-	ColorCyan    Color = 6
-	ColorWhite   Color = 7
+	// ColorCyan is cyan color
+	ColorCyan Color = 6
+	// ColorWhite is white color
+	ColorWhite Color = 7
 )
 
 // NewRGBColor 创建 RGB 颜色
@@ -166,10 +175,10 @@ func (e *EventResize) Size() (int, int) {
 
 // EventMouse 鼠标事件
 type EventMouse struct {
-	when   time.Time
-	x, y   int
-	btn    ButtonMask
-	mod    ModMask
+	when time.Time
+	x, y int
+	btn  ButtonMask
+	mod  ModMask
 }
 
 // When 返回事件时间
@@ -196,40 +205,75 @@ func (e *EventMouse) Modifiers() ModMask {
 type Key int
 
 const (
+	// KeyNone represents no key
 	KeyNone Key = iota
+	// KeyRune represents a rune key
 	KeyRune
+	// KeyEnter represents Enter key
 	KeyEnter
+	// KeyBackspace represents Backspace key
 	KeyBackspace
+	// KeyTab represents Tab key
 	KeyTab
+	// KeyEscape represents Escape key
 	KeyEscape
+	// KeyBacktab represents Shift+Tab
 	KeyBacktab
+	// KeyInsert represents Insert key
 	KeyInsert
+	// KeyDelete represents Delete key
 	KeyDelete
+	// KeyUp represents Up arrow
 	KeyUp
+	// KeyDown represents Down arrow
 	KeyDown
+	// KeyLeft represents Left arrow
 	KeyLeft
+	// KeyRight represents Right arrow
 	KeyRight
+	// KeyHome represents Home key
 	KeyHome
+	// KeyEnd represents End key
 	KeyEnd
+	// KeyUpLeft represents diagonal
 	KeyUpLeft
+	// KeyUpRight represents diagonal
 	KeyUpRight
+	// KeyDownLeft represents diagonal
 	KeyDownLeft
+	// KeyDownRight represents diagonal
 	KeyDownRight
+	// KeyCenter represents center key
 	KeyCenter
+	// KeyPgUp represents Page Up
 	KeyPgUp
+	// KeyPgDn represents Page Down
 	KeyPgDn
+	// KeyF1 represents F1 function key
 	KeyF1
+	// KeyF2 represents F2 function key
 	KeyF2
+	// KeyF3 represents F3 function key
 	KeyF3
+	// KeyF4 represents F4 function key
 	KeyF4
+	// KeyF5 represents F5 function key
 	KeyF5
+	// KeyF6 represents F6 function key
 	KeyF6
+	// KeyF7 represents F7 function key
 	KeyF7
+	// KeyF8 represents F8 function key
 	KeyF8
+	// KeyF9 represents F9 function key
 	KeyF9
+	// KeyF10 represents F10 function key
 	KeyF10
+	// KeyF11 represents F11 function key
 	KeyF11
+	// KeyF12 represents F12 function key
 	KeyF12
+	// KeyF13 through KeyF64 are additional function keys
 	KeyF13
 	KeyF14
 	KeyF15
@@ -282,6 +326,7 @@ const (
 	KeyF62
 	KeyF63
 	KeyF64
+	// KeyCtrlA represents Ctrl+A; KeyCtrlB through KeyCtrlZ are similar control keys
 	KeyCtrlA
 	KeyCtrlB
 	KeyCtrlC
@@ -308,6 +353,7 @@ const (
 	KeyCtrlX
 	KeyCtrlY
 	KeyCtrlZ
+	// Additional control keys
 	KeyCtrlSpace
 	KeyCtrlUnderscore
 	KeyCtrlRightSq
@@ -316,68 +362,73 @@ const (
 )
 
 var keyNames = map[Key]string{
-	KeyEnter:      "Enter",
-	KeyBackspace:  "Backspace",
-	KeyTab:        "Tab",
-	KeyEscape:     "Escape",
-	KeyInsert:     "Insert",
-	KeyDelete:     "Delete",
-	KeyUp:         "Up",
-	KeyDown:       "Down",
-	KeyLeft:       "Left",
-	KeyRight:      "Right",
-	KeyHome:       "Home",
-	KeyEnd:        "End",
-	KeyPgUp:       "PgUp",
-	KeyPgDn:       "PgDn",
-	KeyF1:         "F1",
-	KeyF2:         "F2",
-	KeyF3:         "F3",
-	KeyF4:         "F4",
-	KeyF5:         "F5",
-	KeyF6:         "F6",
-	KeyF7:         "F7",
-	KeyF8:         "F8",
-	KeyF9:         "F9",
-	KeyF10:        "F10",
-	KeyF11:        "F11",
-	KeyF12:        "F12",
-	KeyCtrlA:      "Ctrl+A",
-	KeyCtrlB:      "Ctrl+B",
-	KeyCtrlC:      "Ctrl+C",
-	KeyCtrlD:      "Ctrl+D",
-	KeyCtrlE:      "Ctrl+E",
-	KeyCtrlF:      "Ctrl+F",
-	KeyCtrlG:      "Ctrl+G",
-	KeyCtrlH:      "Ctrl+H",
-	KeyCtrlI:      "Ctrl+I",
-	KeyCtrlJ:      "Ctrl+J",
-	KeyCtrlK:      "Ctrl+K",
-	KeyCtrlL:      "Ctrl+L",
-	KeyCtrlM:      "Ctrl+M",
-	KeyCtrlN:      "Ctrl+N",
-	KeyCtrlO:      "Ctrl+O",
-	KeyCtrlP:      "Ctrl+P",
-	KeyCtrlQ:      "Ctrl+Q",
-	KeyCtrlR:      "Ctrl+R",
-	KeyCtrlS:      "Ctrl+S",
-	KeyCtrlT:      "Ctrl+T",
-	KeyCtrlU:      "Ctrl+U",
-	KeyCtrlV:      "Ctrl+V",
-	KeyCtrlW:      "Ctrl+W",
-	KeyCtrlX:      "Ctrl+X",
-	KeyCtrlY:      "Ctrl+Y",
-	KeyCtrlZ:      "Ctrl+Z",
+	KeyEnter:     "Enter",
+	KeyBackspace: "Backspace",
+	KeyTab:       "Tab",
+	KeyEscape:    "Escape",
+	KeyInsert:    "Insert",
+	KeyDelete:    "Delete",
+	KeyUp:        "Up",
+	KeyDown:      "Down",
+	KeyLeft:      "Left",
+	KeyRight:     "Right",
+	KeyHome:      "Home",
+	KeyEnd:       "End",
+	KeyPgUp:      "PgUp",
+	KeyPgDn:      "PgDn",
+	KeyF1:        "F1",
+	KeyF2:        "F2",
+	KeyF3:        "F3",
+	KeyF4:        "F4",
+	KeyF5:        "F5",
+	KeyF6:        "F6",
+	KeyF7:        "F7",
+	KeyF8:        "F8",
+	KeyF9:        "F9",
+	KeyF10:       "F10",
+	KeyF11:       "F11",
+	KeyF12:       "F12",
+	KeyCtrlA:     "Ctrl+A",
+	KeyCtrlB:     "Ctrl+B",
+	KeyCtrlC:     "Ctrl+C",
+	KeyCtrlD:     "Ctrl+D",
+	KeyCtrlE:     "Ctrl+E",
+	KeyCtrlF:     "Ctrl+F",
+	KeyCtrlG:     "Ctrl+G",
+	KeyCtrlH:     "Ctrl+H",
+	KeyCtrlI:     "Ctrl+I",
+	KeyCtrlJ:     "Ctrl+J",
+	KeyCtrlK:     "Ctrl+K",
+	KeyCtrlL:     "Ctrl+L",
+	KeyCtrlM:     "Ctrl+M",
+	KeyCtrlN:     "Ctrl+N",
+	KeyCtrlO:     "Ctrl+O",
+	KeyCtrlP:     "Ctrl+P",
+	KeyCtrlQ:     "Ctrl+Q",
+	KeyCtrlR:     "Ctrl+R",
+	KeyCtrlS:     "Ctrl+S",
+	KeyCtrlT:     "Ctrl+T",
+	KeyCtrlU:     "Ctrl+U",
+	KeyCtrlV:     "Ctrl+V",
+	KeyCtrlW:     "Ctrl+W",
+	KeyCtrlX:     "Ctrl+X",
+	KeyCtrlY:     "Ctrl+Y",
+	KeyCtrlZ:     "Ctrl+Z",
 }
 
 // ModMask 修饰键掩码
 type ModMask int
 
 const (
+	// ModNone represents no modifier
 	ModNone ModMask = iota
+	// ModAlt represents Alt modifier
 	ModAlt
+	// ModCtrl represents Ctrl modifier
 	ModCtrl
+	// ModShift represents Shift modifier
 	ModShift
+	// ModMeta represents Meta modifier
 	ModMeta
 )
 
@@ -385,10 +436,16 @@ const (
 type ButtonMask int
 
 const (
+	// ButtonNone represents no button
 	ButtonNone ButtonMask = iota
+	// ButtonLeft represents left mouse button
 	ButtonLeft
+	// ButtonMiddle represents middle mouse button
 	ButtonMiddle
+	// ButtonRight represents right mouse button
 	ButtonRight
+	// ButtonWheelUp represents scroll wheel up
 	ButtonWheelUp
+	// ButtonWheelDown represents scroll wheel down
 	ButtonWheelDown
 )

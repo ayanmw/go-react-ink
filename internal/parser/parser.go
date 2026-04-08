@@ -11,20 +11,24 @@ import (
 type NodeType int
 
 const (
+	// NodeElement represents an element node
 	NodeElement NodeType = iota
+	// NodeText represents a text node
 	NodeText
+	// NodeExpression represents an expression node
 	NodeExpression
+	// NodeFragment represents a fragment node
 	NodeFragment
 )
 
 // Node AST 节点
 type Node struct {
 	Type       NodeType
-	TagName    string                 // Element
-	Attributes map[string]AttrValue   // Element
-	Children   []Node                 // Element, Fragment
-	Value      string                 // Text, Expression
-	Spread     []string               // Element: spread attributes
+	TagName    string               // Element
+	Attributes map[string]AttrValue // Element
+	Children   []Node               // Element, Fragment
+	Value      string               // Text, Expression
+	Spread     []string             // Element: spread attributes
 	Line       int
 	Column     int
 }
@@ -274,9 +278,9 @@ func (p *Parser) parseChildren(node *Node) {
 // parseExpression 解析表达式
 func (p *Parser) parseExpression() Node {
 	node := Node{
-		Type:     NodeExpression,
-		Line:     p.current().Line,
-		Column:   p.current().Column,
+		Type:   NodeExpression,
+		Line:   p.current().Line,
+		Column: p.current().Column,
 	}
 
 	p.advance() // 跳过 {

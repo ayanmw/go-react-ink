@@ -10,28 +10,39 @@ import (
 type TokenType int
 
 const (
-	// 标签相关
+	// TokenEOF marks end of input
 	TokenEOF TokenType = iota
+	// TokenError marks an error token
 	TokenError
-	TokenTagStart      // <
-	TokenTagEnd        // >
-	TokenTagSelfClose  // />
-	TokenTagCloseStart // </
-	TokenTagName       // Box, Text, Fragment
+	// TokenTagStart marks tag start (<)
+	TokenTagStart
+	// TokenTagEnd marks tag end (>)
+	TokenTagEnd
+	// TokenTagSelfClose marks self-closing tag (/>)
+	TokenTagSelfClose
+	// TokenTagCloseStart marks closing tag start (</)
+	TokenTagCloseStart
+	// TokenTagName marks tag name (Box, Text, Fragment)
+	TokenTagName
 
-	// 属性相关
-	TokenAttrName     // flexDirection
-	TokenAttrValue    // "column"
-	TokenExprStart    // {
-	TokenExprEnd      // }
-	TokenExprContent  // count * 2
-	TokenSpread       // ...props
+	// TokenAttrName marks attribute name
+	TokenAttrName
+	// TokenAttrValue marks attribute value
+	TokenAttrValue
+	// TokenExprStart marks expression start ({)
+	TokenExprStart
+	// TokenExprEnd marks expression end (})
+	TokenExprEnd
+	// TokenExprContent marks expression content
+	TokenExprContent
+	// TokenSpread marks spread operator (...props)
+	TokenSpread
 
-	// 内容相关
-	TokenText // Hello World
+	// TokenText marks text content
+	TokenText
 
-	// 特殊
-	TokenComment // {/* comment */}
+	// TokenComment marks comment ({/* comment */})
+	TokenComment
 )
 
 // Token 词法单元
@@ -45,11 +56,11 @@ type Token struct {
 
 // Lexer 词法分析器
 type Lexer struct {
-	source   []rune
-	pos      int
-	line     int
-	column   int
-	tokens   []Token
+	source []rune
+	pos    int
+	line   int
+	column int
+	tokens []Token
 }
 
 // New 创建新的词法分析器

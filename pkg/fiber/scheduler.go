@@ -8,19 +8,19 @@ import (
 
 // Scheduler 调度器
 type Scheduler struct {
-	root      *RootFiber
-	workRoot  *Fiber  // 当前工作树
+	root           *RootFiber
+	workRoot       *Fiber // 当前工作树
 	nextUnitOfWork *Fiber // 下一个工作单元
 
 	// 调度状态
-	isWorking bool
+	isWorking    bool
 	isCommitting bool
 	pendingLanes Priority
 
 	// 时间切片
-	timeSlice     time.Duration // 16ms 时间切片
-	startTime     time.Time
-	didYield      bool
+	timeSlice time.Duration // 16ms 时间切片
+	startTime time.Time
+	didYield  bool
 
 	// 副作用
 	pendingEffects []*Fiber

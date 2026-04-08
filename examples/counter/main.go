@@ -65,10 +65,10 @@ func createApp(ctx *hooks.HookContext) core.Element {
 	return core.CreateElement(
 		components.Box,
 		core.Props{
-			"flexDirection":    "column",
-			"padding":          1,
-			"borderStyle":      "single",
-			"borderColor":      "green",
+			"flexDirection": "column",
+			"padding":       1,
+			"borderStyle":   "single",
+			"borderColor":   "green",
 		},
 		[]core.Element{
 			// 标题

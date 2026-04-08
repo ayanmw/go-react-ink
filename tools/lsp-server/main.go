@@ -23,9 +23,9 @@ func main() {
 
 // LSPServer implements a basic LSP server
 type LSPServer struct {
-	reader   *bufio.Reader
-	writer   io.Writer
-	mu       sync.Mutex
+	reader    *bufio.Reader
+	writer    io.Writer
+	mu        sync.Mutex
 	documents map[string]string // URI -> content
 }
 
@@ -107,7 +107,7 @@ func (s *LSPServer) writeMessage(content []byte) {
 
 func (s *LSPServer) handleMessage(msg *Message) {
 	var request struct {
-		JsonRPC string          `json:"jsonrpc"`
+		JSONRPC string          `json:"jsonrpc"`
 		ID      interface{}     `json:"id"`
 		Method  string          `json:"method"`
 		Params  json.RawMessage `json:"params"`
@@ -246,9 +246,9 @@ func (s *LSPServer) handleDiagnostic(id interface{}, params json.RawMessage) {
 
 	diagnostics := s.getDiagnostics(text)
 	s.sendResponse(id, map[string]interface{}{
-		"kind":        "full",
-		"items":       diagnostics,
-		"resultId":    "",
+		"kind":     "full",
+		"items":    diagnostics,
+		"resultId": "",
 	})
 }
 
@@ -325,9 +325,9 @@ func (s *LSPServer) publishDiagnostics(uri, text string) {
 	diagnostics := s.getDiagnostics(text)
 
 	params := map[string]interface{}{
-		"uri": uri,
+		"uri":         uri,
 		"diagnostics": diagnostics,
-		"version": 0,
+		"version":     0,
 	}
 
 	s.sendNotification("textDocument/publishDiagnostics", params)
@@ -365,10 +365,10 @@ func (s *LSPServer) getCompletions() []interface{} {
 
 	for _, comp := range components {
 		items = append(items, map[string]interface{}{
-			"label":  comp,
-			"kind":   7, // Class
-			"detail": fmt.Sprintf("Component: %s", comp),
-			"insertText": fmt.Sprintf("<%s>$1</%s>", comp, comp),
+			"label":            comp,
+			"kind":             7, // Class
+			"detail":           fmt.Sprintf("Component: %s", comp),
+			"insertText":       fmt.Sprintf("<%s>$1</%s>", comp, comp),
 			"insertTextFormat": 2, // Snippet
 		})
 	}

@@ -8,19 +8,19 @@ import (
 // BoxProps Box 组件属性
 type BoxProps struct {
 	// Flexbox 属性
-	FlexDirection   string // row, column, row-reverse, column-reverse
-	JustifyContent  string // flex-start, flex-end, center, space-between, space-around
-	AlignItems      string // flex-start, flex-end, center, stretch, baseline
-	AlignSelf       string // flex-start, flex-end, center, stretch, baseline
-	FlexWrap        string // nowrap, wrap, wrap-reverse
-	FlexGrow        int
-	FlexShrink      int
-	FlexBasis       string
-	Order           int
+	FlexDirection  string // row, column, row-reverse, column-reverse
+	JustifyContent string // flex-start, flex-end, center, space-between, space-around
+	AlignItems     string // flex-start, flex-end, center, stretch, baseline
+	AlignSelf      string // flex-start, flex-end, center, stretch, baseline
+	FlexWrap       string // nowrap, wrap, wrap-reverse
+	FlexGrow       int
+	FlexShrink     int
+	FlexBasis      string
+	Order          int
 
 	// 尺寸
-	Width    int
-	Height   int
+	Width     int
+	Height    int
 	MinWidth  int
 	MinHeight int
 	MaxWidth  int
@@ -39,15 +39,15 @@ type BoxProps struct {
 	PaddingLeft   int
 
 	// 边框
-	BorderStyle string
-	BorderColor string
+	BorderStyle  string
+	BorderColor  string
 	BorderTop    bool
 	BorderRight  bool
 	BorderBottom bool
 	BorderLeft   bool
 
 	// 其他
-	Display string // flex, none
+	Display  string // flex, none
 	Overflow string // visible, hidden
 }
 
@@ -91,8 +91,8 @@ type TextProps struct {
 	Reverse    bool
 
 	// 对齐
-	Wrap      string // truncate, wrap, wrap-middle, wrap-end
-	Overflow  string // truncate, ellipsis
+	Wrap     string // truncate, wrap, wrap-middle, wrap-end
+	Overflow string // truncate, ellipsis
 }
 
 // Text 文本组件

@@ -16,11 +16,11 @@ var (
 	version = "dev"
 
 	// 命令行参数
-	flagOut      = flag.String("o", "", "Output file (default: stdout)")
-	flagPkg      = flag.String("pkg", "ink", "Component package name")
-	flagWatch    = flag.Bool("watch", false, "Watch for file changes")
-	flagVersion  = flag.Bool("version", false, "Show version")
-	flagHelp     = flag.Bool("help", false, "Show help")
+	flagOut     = flag.String("o", "", "Output file (default: stdout)")
+	flagPkg     = flag.String("pkg", "ink", "Component package name")
+	flagWatch   = flag.Bool("watch", false, "Watch for file changes")
+	flagVersion = flag.Bool("version", false, "Show version")
+	flagHelp    = flag.Bool("help", false, "Show help")
 )
 
 func main() {

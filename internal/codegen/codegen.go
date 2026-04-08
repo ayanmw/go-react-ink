@@ -8,17 +8,17 @@ import (
 
 // Generator 代码生成器
 type Generator struct {
-	builder    strings.Builder
-	imports    map[string]bool
-	indent     int
+	builder      strings.Builder
+	imports      map[string]bool
+	indent       int
 	componentPkg string
 }
 
 // New 创建新的代码生成器
 func New(componentPkg string) *Generator {
 	return &Generator{
-		imports:     make(map[string]bool),
-		indent:      0,
+		imports:      make(map[string]bool),
+		indent:       0,
 		componentPkg: componentPkg,
 	}
 }

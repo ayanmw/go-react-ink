@@ -172,8 +172,8 @@ func createUI() core.Element {
 					core.CreateElement(
 						components.Box,
 						core.Props{
-							"flexGrow":     1,
-							"paddingLeft":  1,
+							"flexGrow":      1,
+							"paddingLeft":   1,
 							"flexDirection": "column",
 						},
 						[]core.Element{

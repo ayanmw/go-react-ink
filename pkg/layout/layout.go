@@ -9,9 +9,13 @@ import (
 type Direction int
 
 const (
+	// DirectionRow lays out children horizontally
 	DirectionRow Direction = iota
+	// DirectionRowReverse lays out children horizontally in reverse
 	DirectionRowReverse
+	// DirectionColumn lays out children vertically
 	DirectionColumn
+	// DirectionColumnReverse lays out children vertically in reverse
 	DirectionColumnReverse
 )
 
@@ -19,11 +23,17 @@ const (
 type Justify int
 
 const (
+	// JustifyFlexStart aligns items to start
 	JustifyFlexStart Justify = iota
+	// JustifyFlexEnd aligns items to end
 	JustifyFlexEnd
+	// JustifyCenter aligns items to center
 	JustifyCenter
+	// JustifySpaceBetween distributes space between items
 	JustifySpaceBetween
+	// JustifySpaceAround distributes space around items
 	JustifySpaceAround
+	// JustifySpaceEvenly distributes space evenly
 	JustifySpaceEvenly
 )
 
@@ -31,11 +41,17 @@ const (
 type Align int
 
 const (
+	// AlignAuto uses default alignment
 	AlignAuto Align = iota
+	// AlignFlexStart aligns to start on cross axis
 	AlignFlexStart
+	// AlignFlexEnd aligns to end on cross axis
 	AlignFlexEnd
+	// AlignCenter aligns to center on cross axis
 	AlignCenter
+	// AlignStretch stretches to fill
 	AlignStretch
+	// AlignBaseline aligns to baseline
 	AlignBaseline
 )
 
@@ -43,8 +59,11 @@ const (
 type Wrap int
 
 const (
+	// WrapNoWrap prevents wrapping
 	WrapNoWrap Wrap = iota
+	// WrapWrap allows wrapping
 	WrapWrap
+	// WrapWrapReverse allows reverse wrapping
 	WrapWrapReverse
 )
 
@@ -52,7 +71,9 @@ const (
 type Position int
 
 const (
+	// PositionRelative positions relative to parent
 	PositionRelative Position = iota
+	// PositionAbsolute positions absolutely
 	PositionAbsolute
 )
 
@@ -60,8 +81,11 @@ const (
 type Overflow int
 
 const (
+	// OverflowVisible shows overflow content
 	OverflowVisible Overflow = iota
+	// OverflowHidden hides overflow content
 	OverflowHidden
+	// OverflowScroll allows scrolling overflow
 	OverflowScroll
 )
 
@@ -69,35 +93,37 @@ const (
 type Display int
 
 const (
+	// DisplayFlex displays as flex container
 	DisplayFlex Display = iota
+	// DisplayNone hides element
 	DisplayNone
 )
 
 // Node 布局节点
 type Node struct {
 	// 样式属性
-	Direction     Direction
-	Justify       Justify
-	AlignItems    Align
-	AlignSelf     Align
-	AlignContent  Align
-	Wrap          Wrap
-	Display       Display
-	Position      Position
-	Overflow      Overflow
+	Direction    Direction
+	Justify      Justify
+	AlignItems   Align
+	AlignSelf    Align
+	AlignContent Align
+	Wrap         Wrap
+	Display      Display
+	Position     Position
+	Overflow     Overflow
 
 	// 尺寸
-	Width    float64
-	Height   float64
+	Width     float64
+	Height    float64
 	MinWidth  float64
 	MinHeight float64
 	MaxWidth  float64
 	MaxHeight float64
 
 	// 边距
-	Margin       [4]float64 // top, right, bottom, left
-	Padding      [4]float64
-	Border       [4]float64
+	Margin  [4]float64 // top, right, bottom, left
+	Padding [4]float64
+	Border  [4]float64
 
 	// Flex 属性
 	FlexGrow   float64
@@ -119,10 +145,10 @@ type Node struct {
 
 // Layout 计算后的布局
 type Layout struct {
-	X           float64
-	Y           float64
-	Width       float64
-	Height      float64
+	X             float64
+	Y             float64
+	Width         float64
+	Height        float64
 	ComputedBasis float64
 }
 

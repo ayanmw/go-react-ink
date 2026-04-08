@@ -9,8 +9,11 @@ import (
 type Priority int
 
 const (
+	// PriorityNormal is default priority
 	PriorityNormal Priority = iota
+	// PriorityHigh is for urgent updates
 	PriorityHigh
+	// PriorityLow is for deferred updates
 	PriorityLow
 )
 
@@ -18,10 +21,15 @@ const (
 type WorkTag int
 
 const (
+	// TagFunctionComponent marks function component
 	TagFunctionComponent WorkTag = iota
+	// TagHostComponent marks host component
 	TagHostComponent
+	// TagHostText marks host text
 	TagHostText
+	// TagFragment marks fragment
 	TagFragment
+	// TagRoot marks root node
 	TagRoot
 )
 
@@ -29,31 +37,36 @@ const (
 type EffectTag int
 
 const (
+	// EffectNoEffect means no effect
 	EffectNoEffect EffectTag = 0
-	EffectPlacement EffectTag = 1 << iota // 插入
-	EffectUpdate                        // 更新
-	EffectDeletion                      // 删除
-	EffectRef                           // Ref 更新
+	// EffectPlacement marks insertion
+	EffectPlacement EffectTag = 1 << iota
+	// EffectUpdate marks update
+	EffectUpdate
+	// EffectDeletion marks deletion
+	EffectDeletion
+	// EffectRef marks ref update
+	EffectRef
 )
 
 // Fiber Fiber 节点
 type Fiber struct {
 	// 树结构
-	Tag         WorkTag
-	Key         string
-	ElementID   string // React 内部 ID
-	Type        any    // 组件类型
-	PendingProps any   // 新属性
-	MemoizedProps any   // 旧属性
+	Tag           WorkTag
+	Key           string
+	ElementID     string // React 内部 ID
+	Type          any    // 组件类型
+	PendingProps  any    // 新属性
+	MemoizedProps any    // 旧属性
 
 	// Fiber 树
-	Return   *Fiber // 父节点
-	Child    *Fiber // 第一个子节点
-	Sibling  *Fiber // 下一个兄弟节点
-	Index    int    // 子节点索引
+	Return  *Fiber // 父节点
+	Child   *Fiber // 第一个子节点
+	Sibling *Fiber // 下一个兄弟节点
+	Index   int    // 子节点索引
 
 	// 状态
-	StateNode   any   // 实例节点 (DOM, 组件实例)
+	StateNode     any // 实例节点 (DOM, 组件实例)
 	MemoizedState any // Hooks 状态链表
 
 	// 副作用

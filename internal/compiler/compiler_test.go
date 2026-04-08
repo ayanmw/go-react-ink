@@ -192,8 +192,8 @@ func App() Element {
 func TestConvertAST(t *testing.T) {
 	// 测试 AST 转换
 	parserNode := parser.Node{
-		Type:     parser.NodeElement,
-		TagName:  "Box",
+		Type:    parser.NodeElement,
+		TagName: "Box",
 		Children: []parser.Node{
 			{Type: parser.NodeText, Value: "Hello"},
 		},

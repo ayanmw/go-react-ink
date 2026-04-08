@@ -28,7 +28,7 @@ func TestCreateInstance(t *testing.T) {
 
 	// 创建 Box 实例
 	props := core.Props{
-		"flexDirection": "column",
+		"flexDirection":  "column",
 		"justifyContent": "center",
 		"alignItems":     "center",
 		"width":          40,

@@ -12,10 +12,15 @@ import (
 type ComponentType int
 
 const (
+	// ComponentTypeBox represents Box component
 	ComponentTypeBox ComponentType = iota
+	// ComponentTypeText represents Text component
 	ComponentTypeText
+	// ComponentTypeSpacer represents Spacer component
 	ComponentTypeSpacer
+	// ComponentTypeNewline represents Newline component
 	ComponentTypeNewline
+	// ComponentTypeUnknown represents unknown component
 	ComponentTypeUnknown
 )
 
@@ -38,9 +43,9 @@ func NewHostConfig(width, height int) *HostConfig {
 }
 
 // GetComponentType 获取组件类型
-func GetComponentType(type_ any) ComponentType {
+func GetComponentType(compType any) ComponentType {
 	// 通过名称或指针比较
-	typeStr := getTypeString(type_)
+	typeStr := getTypeString(compType)
 	switch typeStr {
 	case "Box":
 		return ComponentTypeBox
@@ -55,7 +60,7 @@ func GetComponentType(type_ any) ComponentType {
 	}
 }
 
-func getTypeString(type_ any) string {
+func getTypeString(compType any) string {
 	// 简化版：返回未知类型，实际使用时传入组件名称
 	return "Unknown"
 }
@@ -85,13 +90,13 @@ func (h *HostConfig) UpdateInstanceByName(instance any, name string, props core.
 }
 
 // CreateInstance 创建实例
-func (h *HostConfig) CreateInstance(type_ any, props core.Props) any {
+func (h *HostConfig) CreateInstance(compType any, props core.Props) any {
 	// 创建布局节点
 	node := layout.NewNode()
 
 	// 根据类型设置属性
-	compType := GetComponentType(type_)
-	switch compType {
+	ct := GetComponentType(compType)
+	switch ct {
 	case ComponentTypeBox:
 		h.applyBoxProps(node, props)
 	case ComponentTypeText:
@@ -217,10 +222,10 @@ func (h *HostConfig) CreateTextInstance(text string) any {
 }
 
 // UpdateInstance 更新实例
-func (h *HostConfig) UpdateInstance(instance any, type_ any, props core.Props) {
+func (h *HostConfig) UpdateInstance(instance any, compType any, props core.Props) {
 	if node, ok := instance.(*layout.Node); ok {
-		compType := GetComponentType(type_)
-		switch compType {
+		ct := GetComponentType(compType)
+		switch ct {
 		case ComponentTypeBox:
 			h.applyBoxProps(node, props)
 		case ComponentTypeText:
@@ -257,15 +262,15 @@ func (h *HostConfig) ReplaceContainerChildren(container any, children []any) {
 }
 
 // PrepareUpdate 准备更新
-func (h *HostConfig) PrepareUpdate(instance any, type_ any, oldProps, newProps core.Props) any {
+func (h *HostConfig) PrepareUpdate(instance any, compType any, oldProps, newProps core.Props) any {
 	// 返回需要更新的属性
 	return newProps
 }
 
 // ShouldSetTextContent 是否应该设置文本内容
-func (h *HostConfig) ShouldSetTextContent(type_ any, props core.Props) bool {
+func (h *HostConfig) ShouldSetTextContent(compType any, props core.Props) bool {
 	// Text 组件应该设置文本内容
-	if str, ok := type_.(string); ok {
+	if str, ok := compType.(string); ok {
 		return str == "Text"
 	}
 	return false
@@ -339,7 +344,7 @@ func (h *HostConfig) GetRootHostContext(rootContainerInstance any) any {
 }
 
 // GetChildHostContext 获取子 Host 上下文
-func (h *HostConfig) GetChildHostContext(parentHostContext, type_ any, rootContainerInstance any) any {
+func (h *HostConfig) GetChildHostContext(parentHostContext, compType any, rootContainerInstance any) any {
 	return parentHostContext
 }
 

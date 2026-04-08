@@ -14,8 +14,8 @@ type Cell struct {
 
 // Style 样式
 type Style struct {
-	FgColor Color
-	BgColor Color
+	FgColor   Color
+	BgColor   Color
 	Bold      bool
 	Italic    bool
 	Underline bool
@@ -26,7 +26,7 @@ type Style struct {
 
 // Color 颜色
 type Color struct {
-	IsRGB  bool
+	IsRGB   bool
 	R, G, B uint8
 	Index   uint8 // 256色索引
 }
@@ -124,9 +124,9 @@ func (b *Buffer) Diff(other *Buffer) []Change {
 
 			if old.Char != new.Char || !styleEqual(old.Style, new.Style) {
 				changes = append(changes, Change{
-					X:     x,
-					Y:     y,
-					Cell:  new,
+					X:    x,
+					Y:    y,
+					Cell: new,
 				})
 			}
 		}
@@ -287,13 +287,13 @@ func styleToANSI(style Style) string {
 	if style.FgColor.IsRGB {
 		codes = append(codes,
 			"\x1b[38;2;"+intToStr(int(style.FgColor.R))+";"+
-			intToStr(int(style.FgColor.G))+";"+
-			intToStr(int(style.FgColor.B))+"m")
+				intToStr(int(style.FgColor.G))+";"+
+				intToStr(int(style.FgColor.B))+"m")
 	} else if style.FgColor.Index > 0 {
 		if style.FgColor.Index < 8 {
-			codes = append(codes, "\x1b[" + intToStr(30 + int(style.FgColor.Index)) + "m")
+			codes = append(codes, "\x1b["+intToStr(30+int(style.FgColor.Index))+"m")
 		} else {
-			codes = append(codes, "\x1b[38;5;" + intToStr(int(style.FgColor.Index)) + "m")
+			codes = append(codes, "\x1b[38;5;"+intToStr(int(style.FgColor.Index))+"m")
 		}
 	}
 
@@ -301,13 +301,13 @@ func styleToANSI(style Style) string {
 	if style.BgColor.IsRGB {
 		codes = append(codes,
 			"\x1b[48;2;"+intToStr(int(style.BgColor.R))+";"+
-			intToStr(int(style.BgColor.G))+";"+
-			intToStr(int(style.BgColor.B))+"m")
+				intToStr(int(style.BgColor.G))+";"+
+				intToStr(int(style.BgColor.B))+"m")
 	} else if style.BgColor.Index > 0 {
 		if style.BgColor.Index < 8 {
-			codes = append(codes, "\x1b[" + intToStr(40 + int(style.BgColor.Index)) + "m")
+			codes = append(codes, "\x1b["+intToStr(40+int(style.BgColor.Index))+"m")
 		} else {
-			codes = append(codes, "\x1b[48;5;" + intToStr(int(style.BgColor.Index)) + "m")
+			codes = append(codes, "\x1b[48;5;"+intToStr(int(style.BgColor.Index))+"m")
 		}
 	}
 

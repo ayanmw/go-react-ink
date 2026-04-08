@@ -28,8 +28,8 @@ func TestGenerateSimpleElement(t *testing.T) {
 
 func TestGenerateElementWithAttrs(t *testing.T) {
 	node := Node{
-		Type:       NodeElement,
-		TagName:    "Box",
+		Type:    NodeElement,
+		TagName: "Box",
 		Attributes: map[string]AttrValue{
 			"flexDirection": {IsExpression: false, Value: "column"},
 			"padding":       {IsExpression: true, Value: "1"},
@@ -64,8 +64,8 @@ func TestGenerateElementWithAttrs(t *testing.T) {
 
 func TestGenerateElementWithChildren(t *testing.T) {
 	node := Node{
-		Type:     NodeElement,
-		TagName:  "Box",
+		Type:    NodeElement,
+		TagName: "Box",
 		Children: []Node{
 			{Type: NodeElement, TagName: "Text", Children: []Node{}},
 		},
@@ -118,7 +118,7 @@ func TestGenerateExpression(t *testing.T) {
 
 func TestGenerateFragment(t *testing.T) {
 	node := Node{
-		Type:     NodeFragment,
+		Type: NodeFragment,
 		Children: []Node{
 			{Type: NodeText, Value: "A"},
 			{Type: NodeText, Value: "B"},
@@ -136,7 +136,7 @@ func TestGenerateFragment(t *testing.T) {
 
 func TestGenerateFragmentSingleChild(t *testing.T) {
 	node := Node{
-		Type:     NodeFragment,
+		Type: NodeFragment,
 		Children: []Node{
 			{Type: NodeText, Value: "Single"},
 		},
@@ -173,12 +173,12 @@ func TestGenerateSpread(t *testing.T) {
 
 func TestGenerateNestedElements(t *testing.T) {
 	node := Node{
-		Type:     NodeElement,
-		TagName:  "Box",
+		Type:    NodeElement,
+		TagName: "Box",
 		Children: []Node{
 			{
-				Type:     NodeElement,
-				TagName:  "Text",
+				Type:    NodeElement,
+				TagName: "Text",
 				Children: []Node{
 					{Type: NodeText, Value: "Hello"},
 				},
@@ -270,8 +270,8 @@ func TestGenerateImports(t *testing.T) {
 
 func TestGenerateBooleanAttr(t *testing.T) {
 	node := Node{
-		Type:       NodeElement,
-		TagName:    "Box",
+		Type:    NodeElement,
+		TagName: "Box",
 		Attributes: map[string]AttrValue{
 			"flexGrow": {IsExpression: false, Value: "true"},
 		},

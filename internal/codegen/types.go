@@ -4,9 +4,13 @@ package codegen
 type NodeType int
 
 const (
+	// NodeElement represents an element node
 	NodeElement NodeType = iota
+	// NodeText represents a text node
 	NodeText
+	// NodeExpression represents an expression node
 	NodeExpression
+	// NodeFragment represents a fragment node
 	NodeFragment
 )
 

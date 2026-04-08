@@ -173,7 +173,7 @@ func (c *Compiler) fixImports(source []byte) []byte {
 			importEnd := strings.Index(after[importStart:], ")")
 			if importEnd != -1 {
 				importEnd += importStart
-				existingImports := after[importStart:importEnd+1]
+				existingImports := after[importStart : importEnd+1]
 				newImports := existingImports[:len(existingImports)-1] + importBlock + ")"
 				newContent := before + after[:importStart] + newImports + after[importEnd+1:]
 				return []byte(newContent)

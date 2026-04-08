@@ -24,38 +24,38 @@ func TestEndToEndCompilation(t *testing.T) {
 		contains []string
 	}{
 		{
-			name: "simple_element",
-			source: `<Box></Box>`,
+			name:     "simple_element",
+			source:   `<Box></Box>`,
 			contains: []string{"CreateElement", "ink.Box"},
 		},
 		{
-			name: "element_with_attrs",
-			source: `<Box flexDirection="column" padding={1}></Box>`,
+			name:     "element_with_attrs",
+			source:   `<Box flexDirection="column" padding={1}></Box>`,
 			contains: []string{"flexDirection", "column", "padding"},
 		},
 		{
-			name: "element_with_children",
-			source: `<Box><Text>Hello</Text></Box>`,
+			name:     "element_with_children",
+			source:   `<Box><Text>Hello</Text></Box>`,
 			contains: []string{"ink.Box", "ink.Text", "Hello"},
 		},
 		{
-			name: "expression",
-			source: `<Text>Count: {count}</Text>`,
+			name:     "expression",
+			source:   `<Text>Count: {count}</Text>`,
 			contains: []string{"count"},
 		},
 		{
-			name: "self_closing",
-			source: `<Box><Spacer /></Box>`,
+			name:     "self_closing",
+			source:   `<Box><Spacer /></Box>`,
 			contains: []string{"ink.Spacer"},
 		},
 		{
-			name: "spread",
-			source: `<Box {...props}></Box>`,
+			name:     "spread",
+			source:   `<Box {...props}></Box>`,
 			contains: []string{"Spread(props)"},
 		},
 		{
-			name: "fragment",
-			source: `<>A</>`,
+			name:     "fragment",
+			source:   `<>A</>`,
 			contains: []string{"A"},
 		},
 	}

@@ -53,7 +53,7 @@ func extractSpread(props Props) []Props {
 	return spreads
 }
 
-// TextComponent 文本组件
+// Text is the text component function
 var Text = func(props Props, children []Element) Element {
 	text := ""
 	if children != nil && len(children) > 0 {
@@ -79,7 +79,7 @@ func (t *TextElement) Render() string {
 	return t.Content
 }
 
-// BoxComponent Box 容器组件
+// Box is the box container component function
 var Box = func(props Props, children []Element) Element {
 	return &BoxElement{
 		Props:    props,
@@ -104,7 +104,7 @@ func (b *BoxElement) Render() string {
 	return fmt.Sprintf("[Box:%s]", content)
 }
 
-// FragmentComponent Fragment 组件
+// Fragment is the fragment component function
 var Fragment = func(props Props, children []Element) Element {
 	return &FragmentElement{Children: children}
 }
@@ -125,7 +125,7 @@ func (f *FragmentElement) Render() string {
 	return content
 }
 
-// String 返回 Element 的字符串表示（使用 Render 方法）
+// RenderString returns the string representation of an Element
 func RenderString(e Element) string {
 	return e.Render()
 }
