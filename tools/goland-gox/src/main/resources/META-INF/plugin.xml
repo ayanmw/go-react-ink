@@ -1,0 +1,57 @@
+<idea-plugin>
+    <id>com.ayanmw.gox</id>
+    <name>GoX - JSX for Go</name>
+    <vendor email="support@ayanmw.com" url="https://github.com/ayanmw/go-react-ink">ayanmw</vendor>
+
+    <description><![CDATA[
+    <p>GoX - JSX syntax support for Go language.</p>
+    <p>Provides syntax highlighting, code completion, and LSP integration for .gox files.</p>
+    <br>
+    <h3>Features:</h3>
+    <ul>
+        <li>Syntax highlighting for JSX in Go</li>
+        <li>Component and Hook completion</li>
+        <li>Error diagnostics via LSP</li>
+        <li>Compile on save</li>
+    </ul>
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.plugins.go</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- File Type -->
+        <fileType name="GoX" implementationClass="com.ayanmw.gox.GoxFileType"
+                  fieldName="INSTANCE" language="GoX" extensions="gox"/>
+
+        <!-- Language -->
+        <lang.parserDefinition language="GoX"
+                               implementationClass="com.ayanmw.gox.GoxParserDefinition"/>
+
+        <!-- Syntax Highlighter -->
+        <lang.syntaxHighlighterFactory language="GoX"
+                                       implementationClass="com.ayanmw.gox.GoxSyntaxHighlighterFactory"/>
+
+        <!-- Color Settings -->
+        <colorSettingsPage implementation="com.ayanmw.gox.GoxColorSettingsPage"/>
+
+        <!-- Completion -->
+        <completion.contributor language="GoX"
+                               implementationClass="com.ayanmw.gox.GoxCompletionContributor"/>
+
+        <!-- Annotator for errors -->
+        <annotator language="GoX" implementationClass="com.ayanmw.gox.GoxAnnotator"/>
+    </extensions>
+
+    <actions>
+        <action id="Gox.Compile" class="com.ayanmw.gox.actions.CompileAction"
+                text="Compile .gox File" description="Compile current .gox file to .go">
+            <add-to-group group-id="ToolsMenu" anchor="first"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift G"/>
+        </action>
+        <action id="Gox.CompileAll" class="com.ayanmw.gox.actions.CompileAllAction"
+                text="Compile All .gox Files" description="Compile all .gox files in project">
+            <add-to-group group-id="ToolsMenu" anchor="first"/>
+        </action>
+    </actions>
+</idea-plugin>
