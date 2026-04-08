@@ -1,0 +1,89 @@
+{
+  "name": "gox",
+  "displayName": "GoX - JSX for Go",
+  "description": "Syntax highlighting and language support for .gox files (Go with JSX)",
+  "version": "0.1.0",
+  "publisher": "anmingwei",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Language Packs"
+  ],
+  "activationEvents": [
+    "onLanguage:gox"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "gox",
+        "aliases": [
+          "GoX",
+          "gox"
+        ],
+        "extensions": [
+          ".gox"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "gox",
+        "scopeName": "source.gox",
+        "path": "./syntaxes/gox.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "gox.compile",
+        "title": "GoX: Compile Current File"
+      },
+      {
+        "command": "gox.compileAll",
+        "title": "GoX: Compile All .gox Files"
+      },
+      {
+        "command": "gox.watch",
+        "title": "GoX: Watch and Compile"
+      }
+    ],
+    "configuration": {
+      "title": "GoX",
+      "properties": {
+        "gox.goxPath": {
+          "type": "string",
+          "default": "gox",
+          "description": "Path to the gox compiler executable"
+        },
+        "gox.compileOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically compile .gox files on save"
+        },
+        "gox.componentPackage": {
+          "type": "string",
+          "default": "ink",
+          "description": "Default component package name"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/node": "^16.x",
+    "@types/vscode": "^1.60.0",
+    "@typescript-eslint/eslint-plugin": "^5.x",
+    "@typescript-eslint/parser": "^5.x",
+    "eslint": "^8.x",
+    "typescript": "^4.x"
+  }
+}

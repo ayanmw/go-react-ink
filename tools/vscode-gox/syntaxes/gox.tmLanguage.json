@@ -1,0 +1,271 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "GoX",
+  "fileTypes": [".gox"],
+  "scopeName": "source.gox",
+  "patterns": [
+    {
+      "include": "#go-code"
+    },
+    {
+      "include": "#jsx"
+    }
+  ],
+  "repository": {
+    "go-code": {
+      "patterns": [
+        {
+          "comment": "Go keywords",
+          "match": "\\b(break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go|goto|if|import|interface|map|package|range|return|select|struct|switch|type|var)\\b",
+          "name": "keyword.control.go"
+        },
+        {
+          "comment": "Go built-in types",
+          "match": "\\b(bool|byte|complex64|complex128|error|float32|float64|int|int8|int16|int32|int64|rune|string|uint|uint8|uint16|uint32|uint64|uintptr)\\b",
+          "name": "support.type.go"
+        },
+        {
+          "comment": "Go built-in functions",
+          "match": "\\b(append|cap|close|complex|copy|delete|imag|len|make|new|panic|print|println|real|recover)\\b",
+          "name": "support.function.builtin.go"
+        },
+        {
+          "comment": "Go constants",
+          "match": "\\b(true|false|nil|iota)\\b",
+          "name": "constant.language.go"
+        },
+        {
+          "comment": "Strings",
+          "begin": "\"",
+          "end": "\"",
+          "name": "string.quoted.double.go",
+          "patterns": [
+            {
+              "match": "\\\\.",
+              "name": "constant.character.escape.go"
+            }
+          ]
+        },
+        {
+          "comment": "Raw strings",
+          "begin": "`",
+          "end": "`",
+          "name": "string.quoted.raw.go"
+        },
+        {
+          "comment": "Characters",
+          "begin": "'",
+          "end": "'",
+          "name": "string.quoted.single.go",
+          "patterns": [
+            {
+              "match": "\\\\.",
+              "name": "constant.character.escape.go"
+            }
+          ]
+        },
+        {
+          "comment": "Numbers",
+          "match": "\\b(0x[0-9a-fA-F_]+|0o[0-7_]+|0b[01_]+|[0-9][0-9_]*(\\.[0-9][0-9_]*)?([eE][+-]?[0-9][0-9_]*)?)i?\\b",
+          "name": "constant.numeric.go"
+        },
+        {
+          "comment": "Single-line comment",
+          "match": "//.*$",
+          "name": "comment.line.double-slash.go"
+        },
+        {
+          "comment": "Multi-line comment",
+          "begin": "/\\*",
+          "end": "\\*/",
+          "name": "comment.block.go"
+        },
+        {
+          "comment": "Function names",
+          "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
+          "captures": {
+            "1": {
+              "name": "entity.name.function.go"
+            }
+          }
+        },
+        {
+          "comment": "Package names",
+          "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\.",
+          "captures": {
+            "1": {
+              "name": "entity.name.namespace.go"
+            }
+          }
+        }
+      ]
+    },
+    "jsx": {
+      "patterns": [
+        {
+          "include": "#jsx-tag"
+        },
+        {
+          "include": "#jsx-expression"
+        }
+      ]
+    },
+    "jsx-tag": {
+      "patterns": [
+        {
+          "comment": "Self-closing tag",
+          "begin": "(<)([A-Z][a-zA-Z0-9_]*)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.tag.begin.jsx"
+            },
+            "2": {
+              "name": "entity.name.tag.jsx"
+            }
+          },
+          "end": "(/>)",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.tag.end.jsx"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#jsx-attributes"
+            }
+          ]
+        },
+        {
+          "comment": "Opening tag",
+          "begin": "(<)([A-Z][a-zA-Z0-9_]*)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.tag.begin.jsx"
+            },
+            "2": {
+              "name": "entity.name.tag.jsx"
+            }
+          },
+          "end": "(>)",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.tag.end.jsx"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#jsx-attributes"
+            }
+          ]
+        },
+        {
+          "comment": "Closing tag",
+          "match": "(</)([A-Z][a-zA-Z0-9_]*)(>)",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.tag.begin.jsx"
+            },
+            "2": {
+              "name": "entity.name.tag.jsx"
+            },
+            "3": {
+              "name": "punctuation.definition.tag.end.jsx"
+            }
+          }
+        },
+        {
+          "comment": "Fragment",
+          "begin": "(<)(>)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.tag.begin.jsx"
+            },
+            "2": {
+              "name": "punctuation.definition.tag.end.jsx"
+            }
+          },
+          "end": "(</)(>)",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.tag.begin.jsx"
+            },
+            "2": {
+              "name": "punctuation.definition.tag.end.jsx"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#jsx"
+            }
+          ]
+        }
+      ]
+    },
+    "jsx-attributes": {
+      "patterns": [
+        {
+          "comment": "Attribute name",
+          "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+          "name": "entity.other.attribute-name.jsx"
+        },
+        {
+          "comment": "Attribute value string",
+          "begin": "=\")(.*?)(",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.separator.key-value.jsx"
+            },
+            "2": {
+              "name": "string.quoted.double.jsx"
+            }
+          }
+        },
+        {
+          "comment": "Attribute value expression",
+          "begin": "=\\{",
+          "end": "\\}",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.section.embedded.begin.jsx"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.embedded.end.jsx"
+            }
+          },
+          "name": "meta.embedded.expression.go",
+          "patterns": [
+            {
+              "include": "#go-code"
+            }
+          ]
+        }
+      ]
+    },
+    "jsx-expression": {
+      "comment": "Expression in JSX",
+      "begin": "\\{",
+      "end": "\\}",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.section.embedded.begin.jsx"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.embedded.end.jsx"
+        }
+      },
+      "name": "meta.embedded.expression.go",
+      "patterns": [
+        {
+          "include": "#go-code"
+        },
+        {
+          "include": "#jsx"
+        }
+      ]
+    }
+  }
+}
