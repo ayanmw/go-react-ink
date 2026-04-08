@@ -1,0 +1,129 @@
+# golangci-lint configuration
+# https://golangci-lint.run/usage/configuration/
+
+run:
+  timeout: 5m
+  modules-download-mode: readonly
+  skip-dirs:
+    - tools/lsp-server
+  skip-files:
+    - ".*\\.exe$"
+
+output:
+  format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+
+linters:
+  enable:
+    - errcheck      # Check for unchecked errors
+    - gosimple      # Simplify code
+    - govet         # Report suspicious constructs
+    - ineffassign   # Detect ineffectual assignments
+    - staticcheck   # Go static analysis
+    - typecheck     # Type checking
+    - unused        # Check for unused constants, variables, functions
+    - gofmt         # Check formatting
+    - goimports     # Check import statements
+    - misspell      # Check for misspelled words
+    - revive        # Fast, configurable, extensible, flexible linter
+    - gocritic      # Provides checks that detect bugs, performance and style issues
+    - prealloc      # Find slice declarations that could potentially be pre-allocated
+    - exportloopref # Checks for pointers to enclosing loop variables
+    - stylecheck    # Style checks
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+    check-blank: true
+
+  govet:
+    enable-all: true
+    disable:
+      - shadow
+
+  gofmt:
+    simplify: true
+
+  goimports:
+    local-prefixes: github.com/ayanmw/go-react-ink
+
+  misspell:
+    locale: US
+
+  revive:
+    rules:
+      - name: blank-imports
+      - name: context-as-argument
+      - name: context-keys-type
+      - name: dot-imports
+        disabled: true
+      - name: error-return
+      - name: error-strings
+      - name: error-naming
+      - name: exported
+      - name: if-return
+      - name: increment-decrement
+      - name: var-naming
+      - name: var-declaration
+      - name: package-comments
+      - name: range
+      - name: receiver-naming
+      - name: time-naming
+      - name: unexported-return
+      - name: indent-error-flow
+      - name: errorf
+      - name: empty-block
+      - name: superfluous-else
+      - name: unused-parameter
+      - name: unreachable-code
+      - name: redefines-builtin-id
+
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - style
+      - performance
+    disabled-checks:
+      - dupImport
+      - ifElseChain
+      - octalLiteral
+      - whyNoLint
+      - unnamedResult
+      - hugeParam
+      - rangeValCopy
+
+issues:
+  exclude-rules:
+    # Exclude some linters from running on tests files
+    - path: _test\.go
+      linters:
+        - gocyclo
+        - errcheck
+        - dupl
+        - gosec
+        - revive
+        - gocritic
+
+    # Exclude known linters from partially hard-vendored code
+    - path: internal/hmac/
+      text: "weak cryptographic primitive"
+      linters:
+        - gosec
+
+    # Exclude from tcell package (terminal interface with many constants)
+    - path: pkg/tcell/
+      linters:
+        - revive
+        - gocritic
+      text: "comment on exported"
+
+    # Exclude from examples
+    - path: examples/
+      linters:
+        - errcheck
+
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  new: false
+  fix: false

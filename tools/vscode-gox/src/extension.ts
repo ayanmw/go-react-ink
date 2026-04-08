@@ -13,7 +13,8 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('gox.compile', compileCurrentFile),
         vscode.commands.registerCommand('gox.compileAll', compileAllFiles),
-        vscode.commands.registerCommand('gox.watch', watchAndCompile)
+        vscode.commands.registerCommand('gox.watch', watchAndCompile),
+        vscode.commands.registerCommand('gox.lint', runLint)
     );
 
     // Start LSP client if enabled
@@ -133,6 +134,66 @@ function watchAndCompile() {
     });
 
     vscode.window.showInformationMessage('GoX watch started');
+}
+
+function runLint() {
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    if (!workspaceFolders) {
+        vscode.window.showWarningMessage('No workspace folder open');
+        return;
+    }
+
+    outputChannel.appendLine('=== Running Lint ===');
+    outputChannel.show();
+
+    const workspacePath = workspaceFolders[0].uri.fsPath;
+    let hasErrors = false;
+
+    // Run gofmt
+    outputChannel.appendLine('Checking gofmt...');
+    exec('gofmt -s -d .', { cwd: workspacePath }, (error, stdout, stderr) => {
+        if (stdout) {
+            outputChannel.appendLine('gofmt found issues:');
+            outputChannel.appendLine(stdout);
+            hasErrors = true;
+        } else {
+            outputChannel.appendLine('✓ gofmt: No formatting issues');
+        }
+
+        // Run go vet
+        outputChannel.appendLine('');
+        outputChannel.appendLine('Running go vet...');
+        exec('go vet ./...', { cwd: workspacePath }, (error, stdout, stderr) => {
+            if (error) {
+                outputChannel.appendLine('go vet found issues:');
+                outputChannel.appendLine(stderr || stdout);
+                hasErrors = true;
+            } else {
+                outputChannel.appendLine('✓ go vet: No issues');
+            }
+
+            // Run golint
+            outputChannel.appendLine('');
+            outputChannel.appendLine('Running golint...');
+            exec('golint ./...', { cwd: workspacePath }, (error, stdout, stderr) => {
+                if (stdout) {
+                    outputChannel.appendLine('golint warnings:');
+                    outputChannel.appendLine(stdout);
+                } else {
+                    outputChannel.appendLine('✓ golint: No issues');
+                }
+
+                outputChannel.appendLine('');
+                if (hasErrors) {
+                    outputChannel.appendLine('=== Lint completed with errors ===');
+                    vscode.window.showErrorMessage('Lint found issues. Check output for details.');
+                } else {
+                    outputChannel.appendLine('=== Lint completed successfully ===');
+                    vscode.window.showInformationMessage('Lint passed!');
+                }
+            });
+        });
+    });
 }
 
 function compileFile(filePath: string) {

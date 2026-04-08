@@ -48,6 +48,10 @@
       {
         "command": "gox.watch",
         "title": "GoX: Watch and Compile"
+      },
+      {
+        "command": "gox.lint",
+        "title": "GoX: Run Lint (gofmt, go vet, golint)"
       }
     ],
     "configuration": {
