@@ -248,3 +248,184 @@ func main() {}
 		t.Error("Should preserve existing import 'fmt'")
 	}
 }
+
+func TestNewCompiler(t *testing.T) {
+	c := New("ink")
+	if c.ComponentPkg != "ink" {
+		t.Errorf("Expected ComponentPkg 'ink', got %v", c.ComponentPkg)
+	}
+}
+
+func TestCompileJSXWithBooleanAttr(t *testing.T) {
+	c := New("ink")
+	source := `<Box disabled></Box>`
+	output, err := c.Compile("test.gox", source)
+	if err != nil {
+		t.Fatalf("Compile failed: %v", err)
+	}
+
+	content := string(output)
+	if !strings.Contains(content, "ink.Box") {
+		t.Error("Output should contain 'ink.Box'")
+	}
+}
+
+func TestCompileJSXWithNestedExpression(t *testing.T) {
+	c := New("ink")
+	source := `<Box>{items.map(item => <Text>{item}</Text>)}</Box>`
+	output, err := c.Compile("test.gox", source)
+	if err != nil {
+		t.Fatalf("Compile failed: %v", err)
+	}
+
+	content := string(output)
+	if !strings.Contains(content, "items") {
+		t.Error("Output should contain 'items'")
+	}
+}
+
+func TestCompileJSXWithConditional(t *testing.T) {
+	c := New("ink")
+	source := `<Box>{show ? <Text>Yes</Text> : <Text>No</Text>}</Box>`
+	output, err := c.Compile("test.gox", source)
+	if err != nil {
+		t.Fatalf("Compile failed: %v", err)
+	}
+
+	content := string(output)
+	if !strings.Contains(content, "show") {
+		t.Error("Output should contain 'show'")
+	}
+}
+
+func TestFixImportsMultipleImports(t *testing.T) {
+	c := New("ink")
+	source := []byte(`package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func main() {}
+`)
+	output := c.fixImports(source)
+
+	content := string(output)
+	if !strings.Contains(content, "fmt") {
+		t.Error("Should preserve 'fmt' import")
+	}
+	if !strings.Contains(content, "strings") {
+		t.Error("Should preserve 'strings' import")
+	}
+}
+
+func TestConvertASTWithAttributes(t *testing.T) {
+	parserNode := parser.Node{
+		Type:    parser.NodeElement,
+		TagName: "Box",
+		Attributes: map[string]parser.AttrValue{
+			"color": {IsExpression: false, Value: "red"},
+			"bold":  {IsExpression: false, Value: "true"},
+		},
+	}
+
+	c := New("ink")
+	cgNode := c.convertAST(parserNode)
+
+	if len(cgNode.Attributes) != 2 {
+		t.Errorf("Expected 2 attributes, got %d", len(cgNode.Attributes))
+	}
+}
+
+func TestConvertASTWithExpression(t *testing.T) {
+	parserNode := parser.Node{
+		Type:  parser.NodeExpression,
+		Value: "{count}",
+	}
+
+	c := New("ink")
+	cgNode := c.convertAST(parserNode)
+
+	if cgNode.Type != codegen.NodeExpression {
+		t.Error("Type should be NodeExpression")
+	}
+}
+
+func TestConvertASTWithFragment(t *testing.T) {
+	parserNode := parser.Node{
+		Type: parser.NodeFragment,
+		Children: []parser.Node{
+			{Type: parser.NodeText, Value: "A"},
+			{Type: parser.NodeText, Value: "B"},
+		},
+	}
+
+	c := New("ink")
+	cgNode := c.convertAST(parserNode)
+
+	if cgNode.Type != codegen.NodeFragment {
+		t.Error("Type should be NodeFragment")
+	}
+	if len(cgNode.Children) != 2 {
+		t.Errorf("Expected 2 children, got %d", len(cgNode.Children))
+	}
+}
+
+func TestFixImportsWithNoPackage(t *testing.T) {
+	c := New("ink")
+	source := []byte("func main() { core.CreateElement(nil, nil) }")
+	output := c.fixImports(source)
+
+	content := string(output)
+	if !strings.Contains(content, "package main") {
+		t.Error("Should add package declaration")
+	}
+}
+
+func TestFixImportsPreservesContent(t *testing.T) {
+	c := New("ink")
+	source := []byte(`package main
+
+// MyComment
+func main() {
+	fmt.Println("hello")
+}`)
+	output := c.fixImports(source)
+
+	content := string(output)
+	if !strings.Contains(content, "MyComment") {
+		t.Error("Should preserve comments")
+	}
+	if !strings.Contains(content, "fmt.Println") {
+		t.Error("Should preserve function calls")
+	}
+}
+
+func TestCompileJSXWithStyleProp(t *testing.T) {
+	c := New("ink")
+	source := `<Box style={{color: "red"}}></Box>`
+	output, err := c.Compile("test.gox", source)
+	if err != nil {
+		t.Fatalf("Compile failed: %v", err)
+	}
+
+	content := string(output)
+	if !strings.Contains(content, "ink.Box") {
+		t.Error("Output should contain 'ink.Box'")
+	}
+}
+
+func TestCompileJSXWithNumberProp(t *testing.T) {
+	c := New("ink")
+	source := `<Box width={100}></Box>`
+	output, err := c.Compile("test.gox", source)
+	if err != nil {
+		t.Fatalf("Compile failed: %v", err)
+	}
+
+	content := string(output)
+	if !strings.Contains(content, "100") {
+		t.Error("Output should contain '100'")
+	}
+}

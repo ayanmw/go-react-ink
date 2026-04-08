@@ -4,13 +4,16 @@
 run:
   timeout: 5m
   modules-download-mode: readonly
-  skip-dirs:
+
+issues:
+  exclude-dirs:
     - tools/lsp-server
-  skip-files:
+  exclude-files:
     - ".*\\.exe$"
 
 output:
-  format: colored-line-number
+  formats:
+    - format: colored-line-number
   print-issued-lines: true
   print-linter-name: true
 
@@ -29,7 +32,7 @@ linters:
     - revive        # Fast, configurable, extensible, flexible linter
     - gocritic      # Provides checks that detect bugs, performance and style issues
     - prealloc      # Find slice declarations that could potentially be pre-allocated
-    - exportloopref # Checks for pointers to enclosing loop variables
+    - copyloopvar   # Checks for pointers to enclosing loop variables (replaces exportloopref)
     - stylecheck    # Style checks
 
 linters-settings:
@@ -93,7 +96,6 @@ linters-settings:
       - hugeParam
       - rangeValCopy
 
-issues:
   exclude-rules:
     # Exclude some linters from running on tests files
     - path: _test\.go

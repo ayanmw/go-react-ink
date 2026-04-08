@@ -260,3 +260,190 @@ func TestUseStdout(t *testing.T) {
 		t.Errorf("Expected height 24, got %d", stdout.Height())
 	}
 }
+
+func TestUseStdoutSetSize(t *testing.T) {
+	ctx := hooks.NewHookContext()
+
+	stdout := UseStdout(ctx)
+	stdout.SetSize(100, 50)
+
+	if stdout.Width() != 100 {
+		t.Errorf("Expected width 100, got %d", stdout.Width())
+	}
+
+	if stdout.Height() != 50 {
+		t.Errorf("Expected height 50, got %d", stdout.Height())
+	}
+}
+
+func TestUseStdin(t *testing.T) {
+	ctx := hooks.NewHookContext()
+
+	stdin := UseStdin(ctx)
+
+	if !stdin.IsTTY() {
+		t.Error("Should be TTY by default")
+	}
+}
+
+func TestUseStdinRawMode(t *testing.T) {
+	ctx := hooks.NewHookContext()
+
+	stdin := UseStdin(ctx)
+
+	stdin.SetRaw(true)
+	if !stdin.IsRaw() {
+		t.Error("Should be in raw mode")
+	}
+
+	stdin.SetRaw(false)
+	if stdin.IsRaw() {
+		t.Error("Should not be in raw mode")
+	}
+}
+
+func TestUseStdinOnData(t *testing.T) {
+	ctx := hooks.NewHookContext()
+
+	stdin := UseStdin(ctx)
+
+	var receivedData string
+	stdin.OnData(func(data string) {
+		receivedData = data
+	})
+
+	stdin.EmitData("test")
+
+	if receivedData != "test" {
+		t.Errorf("Expected 'test', got %s", receivedData)
+	}
+}
+
+func TestUseStderr(t *testing.T) {
+	ctx := hooks.NewHookContext()
+
+	stderr := UseStderr(ctx)
+
+	if stderr.Width() != 80 {
+		t.Errorf("Expected width 80, got %d", stderr.Width())
+	}
+
+	if stderr.Height() != 24 {
+		t.Errorf("Expected height 24, got %d", stderr.Height())
+	}
+}
+
+func TestUseWindowSize(t *testing.T) {
+	ctx := hooks.NewHookContext()
+
+	size := UseWindowSize(ctx)
+
+	s := size.Size()
+	if s.Columns != 80 || s.Rows != 24 {
+		t.Errorf("Expected (80, 24), got (%d, %d)", s.Columns, s.Rows)
+	}
+
+	if size.Columns() != 80 {
+		t.Errorf("Expected 80 columns, got %d", size.Columns())
+	}
+
+	if size.Rows() != 24 {
+		t.Errorf("Expected 24 rows, got %d", size.Rows())
+	}
+}
+
+func TestUseWindowSizeSetSize(t *testing.T) {
+	ctx := hooks.NewHookContext()
+
+	size := UseWindowSize(ctx)
+	size.SetSize(120, 40)
+
+	if size.Columns() != 120 {
+		t.Errorf("Expected 120 columns, got %d", size.Columns())
+	}
+
+	if size.Rows() != 40 {
+		t.Errorf("Expected 40 rows, got %d", size.Rows())
+	}
+}
+
+func TestUseBoxMetrics(t *testing.T) {
+	ctx := hooks.NewHookContext()
+
+	metrics := UseBoxMetrics(ctx)
+
+	m := metrics.Metrics()
+	if m.HasMeasured {
+		t.Error("Should not have measured initially")
+	}
+}
+
+func TestUseBoxMetricsSetMetrics(t *testing.T) {
+	ctx := hooks.NewHookContext()
+
+	metrics := UseBoxMetrics(ctx)
+	metrics.SetMetrics(100, 50, 10, 20)
+
+	m := metrics.Metrics()
+	if m.Width != 100 || m.Height != 50 || m.Left != 10 || m.Top != 20 {
+		t.Errorf("Expected (100, 50, 10, 20), got (%f, %f, %f, %f)", m.Width, m.Height, m.Left, m.Top)
+	}
+
+	if !m.HasMeasured {
+		t.Error("Should have measured after SetMetrics")
+	}
+}
+
+func TestUsePaste(t *testing.T) {
+	ctx := hooks.NewHookContext()
+
+	paste := UsePaste(ctx)
+
+	var receivedText string
+	paste.OnPaste(func(text string) {
+		receivedText = text
+	})
+
+	paste.EmitPaste("pasted content")
+
+	if receivedText != "pasted content" {
+		t.Errorf("Expected 'pasted content', got %s", receivedText)
+	}
+}
+
+func TestUseIsScreenReaderEnabled(t *testing.T) {
+	ctx := hooks.NewHookContext()
+
+	reader := UseIsScreenReaderEnabled(ctx)
+
+	if reader.IsEnabled() {
+		t.Error("Should not be enabled by default")
+	}
+
+	reader.SetEnabled(true)
+
+	if !reader.IsEnabled() {
+		t.Error("Should be enabled after SetEnabled(true)")
+	}
+}
+
+func TestAnimationStop(t *testing.T) {
+	ctx := hooks.NewHookContext()
+
+	anim := UseAnimation(ctx, 30)
+	anim.Play()
+
+	if !anim.IsPlaying() {
+		t.Error("Should be playing")
+	}
+
+	anim.Stop()
+
+	if anim.IsPlaying() {
+		t.Error("Should not be playing after stop")
+	}
+
+	if anim.Frame() != 0 {
+		t.Error("Frame should be reset to 0 after stop")
+	}
+}
