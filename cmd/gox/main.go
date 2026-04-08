@@ -37,11 +37,21 @@ func main() {
 		os.Exit(0)
 	}
 
+	// 过滤掉空参数（可能是 flag 已处理的）
 	args := flag.Args()
 	if len(args) == 0 {
 		fmt.Fprintln(os.Stderr, "Error: no input files")
 		usage()
 		os.Exit(1)
+	}
+
+	// 检查是否有未解析的 flag（用户可能把 flag 放在了输入文件后面）
+	for _, arg := range args {
+		if strings.HasPrefix(arg, "-") && arg != "-" {
+			fmt.Fprintf(os.Stderr, "Error: flags must come before input files\n")
+			fmt.Fprintf(os.Stderr, "  Example: gox -o output.go input.gox\n")
+			os.Exit(1)
+		}
 	}
 
 	// 创建编译器

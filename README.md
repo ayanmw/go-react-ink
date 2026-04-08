@@ -68,7 +68,11 @@ func main() {
 ### 2. 编译
 
 ```bash
-gox app.gox -o app.go
+# 编译到标准输出
+gox app.gox
+
+# 编译到指定文件 (注意: -o 必须在输入文件之前)
+gox -o app.go app.gox
 ```
 
 ### 3. 运行
