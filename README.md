@@ -34,7 +34,7 @@ go get github.com/ayanmw/go-react-ink
 安装 CLI 编译器:
 
 ```bash
-go install github.com/anmingwei/go-ink/cmd/gox@latest
+go install github.com/ayanmw/go-react-ink/cmd/gox@latest
 ```
 
 ## 快速开始
@@ -46,8 +46,8 @@ go install github.com/anmingwei/go-ink/cmd/gox@latest
 package main
 
 import (
-    "github.com/anmingwei/go-ink/pkg/core"
-    "github.com/anmingwei/go-ink/pkg/components"
+    "github.com/ayanmw/go-react-ink/pkg/core"
+    "github.com/ayanmw/go-react-ink/pkg/components"
 )
 
 func App() core.Element {
