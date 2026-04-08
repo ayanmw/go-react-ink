@@ -6,6 +6,17 @@
 
 使用 Golang 完整复刻 [React Ink](https://github.com/vadimdemedes/ink) 框架，实现声明式终端 UI 开发体验。
 
+## 对标版本
+
+本项目基于 React Ink 进行复刻实现，当前对标版本：
+
+| 项目 | 版本 | Commit | 日期 |
+|------|------|--------|------|
+| React Ink | v6.8.0 | `be1b1bb6ec65056e2ed60ef3c5ae642704b82d31` | 2025-01 |
+| Go-React-Ink | v0.1.0 | - | 2026-04 |
+
+> **注意**: 当 React Ink 发布新版本时，我们会持续同步更新。请关注 [CHANGELOG.md](./CHANGELOG.md) 获取最新同步状态。
+
 ## 特性
 
 - 🎨 **JSX 语法** - 使用类似 React 的 JSX 语法编写终端 UI

@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Version Mapping
+
+本项目基于 [React Ink](https://github.com/vadimdemedes/ink) 进行复刻实现，版本对应关系：
+
+| Go-React-Ink | React Ink | React Ink Commit | Sync Status |
+|--------------|-----------|------------------|-------------|
+| v0.1.0 | v6.8.0 | `be1b1bb6ec65056e2ed60ef3c5ae642704b82d31` | ✅ Initial implementation |
+
+> 当 React Ink 发布新版本时，我们会持续同步更新。
+
 ## [0.1.0] - 2026-04-08
 
 ### Added
