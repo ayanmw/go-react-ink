@@ -2,10 +2,10 @@
 package hostconfig
 
 import (
-	"github.com/anmingwei/go-ink/pkg/core"
-	"github.com/anmingwei/go-ink/pkg/fiber"
-	"github.com/anmingwei/go-ink/pkg/layout"
-	"github.com/anmingwei/go-ink/pkg/renderer"
+	"github.com/ayanmw/go-react-ink/pkg/core"
+	"github.com/ayanmw/go-react-ink/pkg/fiber"
+	"github.com/ayanmw/go-react-ink/pkg/layout"
+	"github.com/ayanmw/go-react-ink/pkg/renderer"
 )
 
 // ComponentType 组件类型

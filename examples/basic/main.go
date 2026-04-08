@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 
-	"github.com/anmingwei/go-ink/pkg/components"
-	"github.com/anmingwei/go-ink/pkg/core"
+	"github.com/ayanmw/go-react-ink/pkg/components"
+	"github.com/ayanmw/go-react-ink/pkg/core"
 )
 
-//go:generate go run github.com/anmingwei/go-ink/cmd/gox -o app_generated.go app.gox
+//go:generate go run github.com/ayanmw/go-react-ink/cmd/gox -o app_generated.go app.gox
 
 func main() {
 	// 手动创建 UI 结构 (模拟编译器输出)

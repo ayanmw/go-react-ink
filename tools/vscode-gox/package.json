@@ -3,7 +3,7 @@
   "displayName": "GoX - JSX for Go",
   "description": "Syntax highlighting and language support for .gox files (Go with JSX)",
   "version": "0.1.0",
-  "publisher": "anmingwei",
+  "publisher": "ayanmw",
   "engines": {
     "vscode": "^1.60.0"
   },

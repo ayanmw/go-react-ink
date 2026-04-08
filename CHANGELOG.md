@@ -138,9 +138,8 @@ go-ink/
 
 ### Known Limitations
 
-- tcell integration not yet complete (Phase 2)
-- LSP completion and hover not yet implemented (Phase 5)
-- Performance validation pending (Phase 4)
+- tcell integration uses standalone interface (Phase 2)
+- Some advanced React Ink features may differ
 
 ### Breaking Changes
 

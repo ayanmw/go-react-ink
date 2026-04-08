@@ -4,7 +4,7 @@ package input
 import (
 	"sync"
 
-	"github.com/anmingwei/go-ink/pkg/hooks"
+	"github.com/ayanmw/go-react-ink/pkg/hooks"
 )
 
 // Key 输入键

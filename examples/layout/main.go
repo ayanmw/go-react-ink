@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/anmingwei/go-ink/pkg/components"
-	"github.com/anmingwei/go-ink/pkg/core"
-	"github.com/anmingwei/go-ink/pkg/layout"
+	"github.com/ayanmw/go-react-ink/pkg/components"
+	"github.com/ayanmw/go-react-ink/pkg/core"
+	"github.com/ayanmw/go-react-ink/pkg/layout"
 )
 
 // 布局示例：展示 Flexbox 布局功能

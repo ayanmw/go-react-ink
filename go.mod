@@ -1,17 +1,3 @@
-module github.com/anmingwei/go-ink
+module github.com/ayanmw/go-react-ink
 
 go 1.21
-
-require (
-	github.com/gdamore/tcell/v2 v2.7.0
-	golang.org/x/tools v0.21.0
-)
-
-require (
-	github.com/gdamore/encoding v1.0.0 // indirect
-	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
-	github.com/mattn/go-runewidth v0.0.15 // indirect
-	golang.org/x/sys v0.19.0 // indirect
-	golang.org/x/term v0.19.0 // indirect
-	golang.org/x/text v1.14.0 // indirect
-)

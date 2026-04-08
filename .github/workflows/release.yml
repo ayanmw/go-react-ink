@@ -1,0 +1,100 @@
+name: Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build-release:
+    name: Build Release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            arch: amd64
+            platform: linux
+            binary: gox
+            binary-lsp: gox-lsp
+          - os: windows-latest
+            arch: amd64
+            platform: windows
+            binary: gox.exe
+            binary-lsp: gox-lsp.exe
+          - os: macos-latest
+            arch: amd64
+            platform: darwin
+            binary: gox
+            binary-lsp: gox-lsp
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Build gox compiler
+        run: |
+          go build -v -ldflags="-s -w" -o ${{ matrix.binary }} ./cmd/gox
+          chmod +x ${{ matrix.binary }}
+
+      - name: Build LSP server
+        run: |
+          cd tools/lsp-server
+          go build -v -ldflags="-s -w" -o ../../${{ matrix.binary-lsp }} .
+          chmod +x ../../${{ matrix.binary-lsp }}
+
+      - name: Create archive
+        run: |
+          mkdir release
+          cp ${{ matrix.binary }} release/
+          cp ${{ matrix.binary-lsp }} release/
+          cp README.md release/
+          cp LICENSE release/ || true
+          cd release
+          tar -czvf gox-${{ matrix.platform }}-${{ matrix.arch }}.tar.gz * || 7z a -tzip gox-${{ matrix.platform }}-${{ matrix.arch }}.zip *
+
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: release/gox-${{ matrix.platform }}-${{ matrix.arch }}.tar.gz
+          asset_name: gox-${{ matrix.platform }}-${{ matrix.arch }}.tar.gz
+          asset_content_type: application/gzip
+
+  build-vscode-extension:
+    name: Build VSCode Extension
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install vsce
+        run: npm install -g @vscode/vsce
+
+      - name: Build extension
+        run: |
+          cd tools/vscode-gox
+          npm install
+          npm run compile
+          vsce package --out gox-${{ github.event.release.tag_name }}.vsix
+
+      - name: Upload VSCode extension
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: tools/vscode-gox/gox-${{ github.event.release.tag_name }}.vsix
+          asset_name: gox-${{ github.event.release.tag_name }}.vsix
+          asset_content_type: application/vsix

@@ -15,7 +15,7 @@ func TestCLI(t *testing.T) {
 	if filepath.Ext(binPath) == "" {
 		binPath += ".exe" // Windows
 	}
-	buildCmd := exec.Command("go", "build", "-o", binPath, "github.com/anmingwei/go-ink/cmd/gox")
+	buildCmd := exec.Command("go", "build", "-o", binPath, "github.com/ayanmw/go-react-ink/cmd/gox")
 	if output, err := buildCmd.CombinedOutput(); err != nil {
 		t.Fatalf("Failed to build CLI: %v\n%s", err, output)
 	}
@@ -67,7 +67,7 @@ func TestCLIHelp(t *testing.T) {
 	if filepath.Ext(binPath) == "" {
 		binPath += ".exe"
 	}
-	buildCmd := exec.Command("go", "build", "-o", binPath, "github.com/anmingwei/go-ink/cmd/gox")
+	buildCmd := exec.Command("go", "build", "-o", binPath, "github.com/ayanmw/go-react-ink/cmd/gox")
 	if output, err := buildCmd.CombinedOutput(); err != nil {
 		t.Fatalf("Failed to build CLI: %v\n%s", err, output)
 	}
@@ -90,7 +90,7 @@ func TestCLIVersion(t *testing.T) {
 	if filepath.Ext(binPath) == "" {
 		binPath += ".exe"
 	}
-	buildCmd := exec.Command("go", "build", "-o", binPath, "github.com/anmingwei/go-ink/cmd/gox")
+	buildCmd := exec.Command("go", "build", "-o", binPath, "github.com/ayanmw/go-react-ink/cmd/gox")
 	if output, err := buildCmd.CombinedOutput(); err != nil {
 		t.Fatalf("Failed to build CLI: %v\n%s", err, output)
 	}
@@ -113,7 +113,7 @@ func TestDirectoryCompilation(t *testing.T) {
 	if filepath.Ext(binPath) == "" {
 		binPath += ".exe"
 	}
-	buildCmd := exec.Command("go", "build", "-o", binPath, "github.com/anmingwei/go-ink/cmd/gox")
+	buildCmd := exec.Command("go", "build", "-o", binPath, "github.com/ayanmw/go-react-ink/cmd/gox")
 	if output, err := buildCmd.CombinedOutput(); err != nil {
 		t.Fatalf("Failed to build CLI: %v\n%s", err, output)
 	}

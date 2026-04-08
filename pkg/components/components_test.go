@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/anmingwei/go-ink/pkg/core"
+	"github.com/ayanmw/go-react-ink/pkg/core"
 )
 
 func TestBox(t *testing.T) {

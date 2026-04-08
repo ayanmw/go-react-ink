@@ -263,7 +263,7 @@ func TestGenerateImports(t *testing.T) {
 	if !strings.Contains(code, "import") {
 		t.Error("Generated code should contain import statement")
 	}
-	if !strings.Contains(code, "github.com/anmingwei/go-ink/pkg/core") {
+	if !strings.Contains(code, "github.com/ayanmw/go-react-ink/pkg/core") {
 		t.Error("Generated code should contain core package import")
 	}
 }

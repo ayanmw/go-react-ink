@@ -3,7 +3,7 @@ package input
 import (
 	"testing"
 
-	"github.com/anmingwei/go-ink/pkg/hooks"
+	"github.com/ayanmw/go-react-ink/pkg/hooks"
 )
 
 func TestUseInput(t *testing.T) {

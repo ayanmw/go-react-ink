@@ -3,7 +3,7 @@ package parser
 import (
 	"testing"
 
-	"github.com/anmingwei/go-ink/internal/lexer"
+	"github.com/ayanmw/go-react-ink/internal/lexer"
 )
 
 func TestParseSimpleElement(t *testing.T) {

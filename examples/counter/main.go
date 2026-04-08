@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 
-	"github.com/anmingwei/go-ink/pkg/components"
-	"github.com/anmingwei/go-ink/pkg/core"
-	"github.com/anmingwei/go-ink/pkg/hooks"
-	"github.com/anmingwei/go-ink/pkg/input"
+	"github.com/ayanmw/go-react-ink/pkg/components"
+	"github.com/ayanmw/go-react-ink/pkg/core"
+	"github.com/ayanmw/go-react-ink/pkg/hooks"
+	"github.com/ayanmw/go-react-ink/pkg/input"
 )
 
 // 模拟一个完整的终端应用

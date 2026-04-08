@@ -1,7 +1,8 @@
-# Go-Ink
+# Go-React-Ink
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/anmingwei/go-ink.svg)](https://pkg.go.dev/github.com/anmingwei/go-ink)
-[![Go Report Card](https://goreportcard.com/badge/github.com/anmingwei/go-ink)](https://goreportcard.com/report/github.com/anmingwei/go-ink)
+[![Go Reference](https://pkg.go.dev/badge/github.com/ayanmw/go-react-ink.svg)](https://pkg.go.dev/github.com/ayanmw/go-react-ink)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ayanmw/go-react-ink)](https://goreportcard.com/report/github.com/ayanmw/go-react-ink)
+[![CI](https://github.com/ayanmw/go-react-ink/actions/workflows/ci.yml/badge.svg)](https://github.com/ayanmw/go-react-ink/actions/workflows/ci.yml)
 
 使用 Golang 完整复刻 [React Ink](https://github.com/vadimdemedes/ink) 框架，实现声明式终端 UI 开发体验。
 
@@ -16,7 +17,7 @@
 ## 安装
 
 ```bash
-go get github.com/anmingwei/go-ink
+go get github.com/ayanmw/go-react-ink
 ```
 
 安装 CLI 编译器:

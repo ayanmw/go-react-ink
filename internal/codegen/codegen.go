@@ -29,7 +29,7 @@ func (g *Generator) Generate(node Node) string {
 
 	// 重置导入
 	g.imports = make(map[string]bool)
-	g.imports["github.com/anmingwei/go-ink/pkg/core"] = true
+	g.imports["github.com/ayanmw/go-react-ink/pkg/core"] = true
 
 	// 生成元素代码
 	code := g.generateNode(node)

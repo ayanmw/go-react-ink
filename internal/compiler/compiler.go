@@ -9,10 +9,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/anmingwei/go-ink/internal/codegen"
-	"github.com/anmingwei/go-ink/internal/lexer"
-	"github.com/anmingwei/go-ink/internal/parser"
-	"github.com/anmingwei/go-ink/internal/scanner"
+	"github.com/ayanmw/go-react-ink/internal/codegen"
+	"github.com/ayanmw/go-react-ink/internal/lexer"
+	"github.com/ayanmw/go-react-ink/internal/parser"
+	"github.com/ayanmw/go-react-ink/internal/scanner"
 )
 
 // Compiler 编译器
@@ -141,10 +141,10 @@ func (c *Compiler) fixImports(source []byte) []byte {
 	// 检查是否已有 import 块
 	importBlock := ""
 	if needsCore {
-		importBlock += fmt.Sprintf("\t\"github.com/anmingwei/go-ink/pkg/core\"\n")
+		importBlock += fmt.Sprintf("\t\"github.com/ayanmw/go-react-ink/pkg/core\"\n")
 	}
 	if needsInk {
-		importBlock += fmt.Sprintf("\t\"github.com/anmingwei/go-ink/pkg/components/%s\"\n", c.ComponentPkg)
+		importBlock += fmt.Sprintf("\t\"github.com/ayanmw/go-react-ink/pkg/components/%s\"\n", c.ComponentPkg)
 	}
 
 	// 找到 package 声明位置

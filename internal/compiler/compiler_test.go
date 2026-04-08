@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/anmingwei/go-ink/internal/codegen"
-	"github.com/anmingwei/go-ink/internal/parser"
+	"github.com/ayanmw/go-react-ink/internal/codegen"
+	"github.com/ayanmw/go-react-ink/internal/parser"
 )
 
 func TestCompileSimpleElement(t *testing.T) {
@@ -184,7 +184,7 @@ func App() Element {
 	if !strings.Contains(content, "import") {
 		t.Error("Output should contain import statement")
 	}
-	if !strings.Contains(content, "github.com/anmingwei/go-ink/pkg/core") {
+	if !strings.Contains(content, "github.com/ayanmw/go-react-ink/pkg/core") {
 		t.Error("Output should contain core package import")
 	}
 }

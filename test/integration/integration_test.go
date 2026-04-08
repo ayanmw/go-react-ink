@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/anmingwei/go-ink/internal/compiler"
+	"github.com/ayanmw/go-react-ink/internal/compiler"
 )
 
 func TestEndToEndCompilation(t *testing.T) {
@@ -246,7 +246,7 @@ func App() Element {
 	if !containsString(outputStr, "import") {
 		t.Error("Should generate import statement")
 	}
-	if !containsString(outputStr, "github.com/anmingwei/go-ink/pkg/core") {
+	if !containsString(outputStr, "github.com/ayanmw/go-react-ink/pkg/core") {
 		t.Error("Should import core package")
 	}
 }

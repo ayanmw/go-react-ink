@@ -1,7 +1,7 @@
-module github.com/anmingwei/go-ink/tools/lsp-server
+module github.com/ayanmw/go-react-ink/tools/lsp-server
 
 go 1.21
 
-require github.com/anmingwei/go-ink v0.1.0
+require github.com/ayanmw/go-react-ink v0.1.0
 
-replace github.com/anmingwei/go-ink => ../..
+replace github.com/ayanmw/go-react-ink => ../..

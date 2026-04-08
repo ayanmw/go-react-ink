@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/anmingwei/go-ink/internal/compiler"
+	"github.com/ayanmw/go-react-ink/internal/compiler"
 )
 
 var (

@@ -4,7 +4,7 @@ package parser
 import (
 	"fmt"
 
-	"github.com/anmingwei/go-ink/internal/lexer"
+	"github.com/ayanmw/go-react-ink/internal/lexer"
 )
 
 // NodeType AST 节点类型

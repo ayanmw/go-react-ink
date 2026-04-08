@@ -2,7 +2,7 @@
 package components
 
 import (
-	"github.com/anmingwei/go-ink/pkg/core"
+	"github.com/ayanmw/go-react-ink/pkg/core"
 )
 
 // BoxProps Box 组件属性

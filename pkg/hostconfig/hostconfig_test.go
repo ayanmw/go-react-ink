@@ -3,8 +3,8 @@ package hostconfig
 import (
 	"testing"
 
-	"github.com/anmingwei/go-ink/pkg/core"
-	"github.com/anmingwei/go-ink/pkg/layout"
+	"github.com/ayanmw/go-react-ink/pkg/core"
+	"github.com/ayanmw/go-react-ink/pkg/layout"
 )
 
 func TestNewHostConfig(t *testing.T) {
