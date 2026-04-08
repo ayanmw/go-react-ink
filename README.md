@@ -361,6 +361,23 @@ go build -o gox ./cmd/gox
 
 欢迎贡献代码！请查看 [CONTRIBUTING.md](./CONTRIBUTING.md) 了解详情。
 
+### 开发快速开始
+
+```bash
+# 克隆项目
+git clone https://github.com/ayanmw/go-react-ink.git
+cd go-react-ink
+
+# 安装依赖
+go mod download
+
+# 运行测试
+go test ./...
+
+# 运行示例
+cd examples/hello-world && go run main.go
+```
+
 ## 许可证
 
 MIT License - 详见 [LICENSE](./LICENSE) 文件

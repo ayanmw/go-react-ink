@@ -185,7 +185,6 @@ curl -s https://api.github.com/repos/vadimdemedes/ink/compare/{old_commit}...{ne
 | 任务 | 优先级 | 状态 | 说明 |
 |------|--------|------|------|
 | tcell 完整集成 | 中 | ⏳ 待办 | 需升级 Go 到 1.24，集成跨平台终端特性 |
-| compiler 测试覆盖率提升 | 低 | ⏳ 待办 | 当前 48.6%，目标 70%+ |
 | React Ink 新版本同步 | 低 | ⏳ 待办 | v6.7.0 ~ v6.5.0 待同步 |
 
 ### 实现差异
