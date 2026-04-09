@@ -1,1 +1,27 @@
-/bin
+# Binaries
+/bin/
+*.exe
+*.test
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Dependencies
+/tools/vscode-gox/node_modules/
+/tools/vscode-gox/out/
+
+# Build artifacts
+/tools/goland-gox/build/
+/tools/goland-gox/.gradle/
+/tools/lsp-server/*.exe
+
+# Coverage
+coverage.out
+coverage.html
+
+# OS
+.DS_Store
+Thumbs.db
