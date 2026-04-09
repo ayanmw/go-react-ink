@@ -4,38 +4,39 @@
 package main
 
 import (
-	ink "github.com/ayanmw/go-react-ink/pkg/components"
 	"github.com/ayanmw/go-react-ink/pkg/core"
+	ink "github.com/ayanmw/go-react-ink/pkg/components"
 )
 
 func App() core.Element {
-	return core.CreateElement(
-		ink.Box,
-		core.Props{
-			"flexDirection": "column",
-		},
-		[]core.Element{
-			core.CreateElement(
-				ink.Text,
-				core.Props{
-					"color": "green",
-				},
-				[]core.Element{
-					core.CreateElement(core.Text, core.Props{"children": "Hello, World!"}, nil),
-				},
-			),
-			core.CreateElement(
-				ink.Text,
-				core.Props{},
-				[]core.Element{
-					core.CreateElement(core.Text, core.Props{"children": "Count: 42"}, nil),
-				},
-			),
-		},
-	)
+    return core.CreateElement(
+	ink.Box,
+	core.Props{
+		"flexDirection": "column",
+	},
+	[]core.Element{
+		core.CreateElement(
+			ink.Text,
+			core.Props{
+				"color": "green",
+			},
+			[]core.Element{
+				core.CreateElement(core.Text, core.Props{"children": "Hello, World!"}, nil),
+			},
+		),
+		core.CreateElement(
+			ink.Text,
+			core.Props{
+			},
+			[]core.Element{
+				core.CreateElement(core.Text, core.Props{"children": "Count: 42"}, nil),
+			},
+		),
+	},
+)
 }
 
 func main() {
-	app := App()
-	println(app.Render())
+    app := App()
+    println(app.Render())
 }
