@@ -17,6 +17,17 @@ const (
 	SegmentJSX
 )
 
+func (t SegmentType) String() string {
+	switch t {
+	case SegmentGoCode:
+		return "GoCode"
+	case SegmentJSX:
+		return "JSX"
+	default:
+		return "Unknown"
+	}
+}
+
 // Segment 代码段
 type Segment struct {
 	Type    SegmentType

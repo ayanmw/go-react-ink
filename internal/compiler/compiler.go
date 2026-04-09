@@ -17,7 +17,8 @@ import (
 
 // Compiler 编译器
 type Compiler struct {
-	ComponentPkg string // 组件包名 (如 "ink")
+	ComponentPkg       string // 组件包名 (如 "ink")
+	removeClosingParen bool   // 内部状态：是否需要移除闭合括号
 }
 
 // New 创建新的编译器
@@ -56,17 +57,42 @@ func (c *Compiler) Compile(filename string, source string) ([]byte, error) {
 		switch seg.Type {
 		case scanner.SegmentGoCode:
 			// Go 代码直接输出
-			output.WriteString(seg.Content)
+			content := seg.Content
+
+			// 如果下一个段是 JSX 且当前段以 return ( 结尾，需要处理
+			if i+1 < len(segments) && segments[i+1].Type == scanner.SegmentJSX {
+				trimmed := strings.TrimSpace(content)
+				if strings.HasSuffix(trimmed, "return (") {
+					// 移除末尾的 ( 和空白
+					content = strings.TrimRight(content, " \t\n\r")
+					content = strings.TrimSuffix(content, "(")
+					// 标记需要特殊处理
+					c.removeClosingParen = true
+				}
+			}
+
+			// 如果前面处理了 return (，需要移除后续的 )
+			if c.removeClosingParen && i > 0 && segments[i-1].Type == scanner.SegmentJSX {
+				// 移除开头的 ) 和空白
+				content = strings.TrimLeft(content, " \t\n\r")
+				if strings.HasPrefix(content, ")") {
+					content = content[1:]
+				}
+				c.removeClosingParen = false
+			}
+
+			output.WriteString(content)
 
 		case scanner.SegmentJSX:
 			// JSX 需要编译
-			jsxCode := c.compileJSX(seg.Content)
+			var jsxCode string
+			if c.removeClosingParen {
+				// 前面已经有 return，只生成元素代码（不生成 return）
+				jsxCode = c.compileJSXNoReturn(seg.Content)
+			} else {
+				jsxCode = c.compileJSX(seg.Content)
+			}
 			output.WriteString(jsxCode)
-		}
-
-		// 添加换行保持分隔
-		if i < len(segments)-1 && !strings.HasSuffix(seg.Content, "\n") {
-			output.WriteString("\n")
 		}
 	}
 
@@ -96,6 +122,28 @@ func (c *Compiler) compileJSX(source string) string {
 
 	// 生成代码
 	return codegen.GenerateReturn(cgNode, c.ComponentPkg)
+}
+
+// compileJSXNoReturn 编译 JSX 代码（不添加 return）
+func (c *Compiler) compileJSXNoReturn(source string) string {
+	// 词法分析
+	l := lexer.New(source)
+	tokens := l.Lex()
+
+	// 语法分析
+	p := parser.New(tokens)
+	node, err := p.Parse()
+	if err != nil {
+		// 解析失败，返回原始代码并添加注释
+		return fmt.Sprintf("/* PARSE ERROR: %v */\n%s", err, source)
+	}
+
+	// 转换 AST 为 codegen Node
+	cgNode := c.convertAST(node)
+
+	// 生成代码（不包含 return）
+	gen := codegen.New(c.ComponentPkg)
+	return gen.GenerateNode(cgNode)
 }
 
 // convertAST 转换 parser AST 为 codegen AST
@@ -138,19 +186,11 @@ func (c *Compiler) fixImports(source []byte) []byte {
 		return source
 	}
 
-	// 检查是否已有 import 块
-	importBlock := ""
-	if needsCore {
-		importBlock += fmt.Sprintf("\t\"github.com/ayanmw/go-react-ink/pkg/core\"\n")
-	}
-	if needsInk {
-		importBlock += fmt.Sprintf("\t\"github.com/ayanmw/go-react-ink/pkg/components/%s\"\n", c.ComponentPkg)
-	}
-
 	// 找到 package 声明位置
 	pkgIndex := strings.Index(content, "package ")
 	if pkgIndex == -1 {
 		// 没有 package 声明，在开头添加
+		importBlock := buildImportBlock(needsCore, needsInk, c.ComponentPkg)
 		newContent := fmt.Sprintf("package main\n\nimport (\n%s)\n\n%s", importBlock, content)
 		return []byte(newContent)
 	}
@@ -165,28 +205,31 @@ func (c *Compiler) fixImports(source []byte) []byte {
 	before := content[:pkgIndex+pkgEnd+1]
 	after := content[pkgIndex+pkgEnd+1:]
 
-	// 检查是否已有 import 声明
+		// 检查是否已有 import 声明
 	if strings.Contains(after, "import ") {
-		// 已有 import，在其中添加
+		// 已有 import，需要智能合并
 		importStart := strings.Index(after, "import (")
 		if importStart != -1 {
 			importEnd := strings.Index(after[importStart:], ")")
 			if importEnd != -1 {
 				importEnd += importStart
 				existingImports := after[importStart : importEnd+1]
-				newImports := existingImports[:len(existingImports)-1] + importBlock + ")"
-				newContent := before + after[:importStart] + newImports + after[importEnd+1:]
+
+				// 解析已有导入并添加缺失的，同时修正别名
+				newImportBlock := mergeImports(existingImports, needsCore, needsInk, c.ComponentPkg)
+				newContent := before + after[:importStart] + newImportBlock + after[importEnd+1:]
 				return []byte(newContent)
 			}
 		}
 		// 单行 import
-		importStart = strings.Index(after, "import \"")
-		if importStart != -1 {
-			importEnd := strings.Index(after[importStart:], "\n")
+		singleImportStart := strings.Index(after, "import \"")
+		if singleImportStart != -1 {
+			importEnd := strings.Index(after[singleImportStart:], "\n")
 			if importEnd != -1 {
-				importEnd += importStart
-				newContent := before + after[:importStart] +
-					fmt.Sprintf("import (\n%s%s)\n", importBlock, after[importStart:importEnd+1]) +
+				importEnd += singleImportStart
+				importBlock := buildImportBlock(needsCore, needsInk, c.ComponentPkg)
+				newContent := before + after[:singleImportStart] +
+					fmt.Sprintf("import (\n%s%s)\n", importBlock, after[singleImportStart:importEnd+1]) +
 					after[importEnd+1:]
 				return []byte(newContent)
 			}
@@ -195,8 +238,74 @@ func (c *Compiler) fixImports(source []byte) []byte {
 	}
 
 	// 没有 import，添加新的 import 块
+	importBlock := buildImportBlock(needsCore, needsInk, c.ComponentPkg)
 	newContent := before + fmt.Sprintf("\nimport (\n%s)\n\n", importBlock) + after
 	return []byte(newContent)
+}
+
+// buildImportBlock 构建导入块内容
+func buildImportBlock(needsCore, needsInk bool, componentPkg string) string {
+	var block string
+	if needsCore {
+		block += "\t\"github.com/ayanmw/go-react-ink/pkg/core\"\n"
+	}
+	if needsInk {
+		block += fmt.Sprintf("\t%s \"github.com/ayanmw/go-react-ink/pkg/components\"\n", componentPkg)
+	}
+	return block
+}
+
+// mergeImports 合并导入，替换已有导入为正确的别名导入
+func mergeImports(existing string, needsCore, needsInk bool, componentPkg string) string {
+	lines := strings.Split(existing, "\n")
+	var newLines []string
+
+	// 记录已添加的导入
+	addedCore := false
+	addedInk := false
+
+	for _, line := range lines {
+		trimmed := strings.TrimSpace(line)
+
+		// 跳过 import ( 和 )
+		if trimmed == "import (" || trimmed == ")" || trimmed == "" {
+			if trimmed == ")" {
+				// 在关闭括号前添加缺失的导入
+				if needsCore && !addedCore {
+					newLines = append(newLines, "\t\"github.com/ayanmw/go-react-ink/pkg/core\"")
+				}
+				if needsInk && !addedInk {
+					newLines = append(newLines, fmt.Sprintf("\t%s \"github.com/ayanmw/go-react-ink/pkg/components\"", componentPkg))
+				}
+			}
+			newLines = append(newLines, line)
+			continue
+		}
+
+		// 检查是否是 core 导入
+		if strings.Contains(line, "github.com/ayanmw/go-react-ink/pkg/core") {
+			if needsCore {
+				newLines = append(newLines, "\t\"github.com/ayanmw/go-react-ink/pkg/core\"")
+				addedCore = true
+			}
+			continue
+		}
+
+		// 检查是否是 components 导入
+		if strings.Contains(line, "github.com/ayanmw/go-react-ink/pkg/components") {
+			if needsInk {
+				// 替换为别名导入
+				newLines = append(newLines, fmt.Sprintf("\t%s \"github.com/ayanmw/go-react-ink/pkg/components\"", componentPkg))
+				addedInk = true
+			}
+			continue
+		}
+
+		// 保留其他导入
+		newLines = append(newLines, line)
+	}
+
+	return strings.Join(newLines, "\n")
 }
 
 // CompileDir 编译目录
@@ -224,7 +333,7 @@ func (c *Compiler) CompileDir(inputDir string, outputDir string) error {
 		}
 
 		inputPath := filepath.Join(inputDir, entry.Name())
-		outputPath := filepath.Join(outputDir, entry.Name()[:len(entry.Name())-1]) // .gox -> .go
+		outputPath := filepath.Join(outputDir, entry.Name()[:len(entry.Name())-4] + ".go") // .gox -> .go
 
 		// 编译文件
 		output, err := c.CompileFile(inputPath)

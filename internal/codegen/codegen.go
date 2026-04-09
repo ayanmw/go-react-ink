@@ -206,3 +206,8 @@ func GenerateAssignment(varName string, node Node, componentPkg string) string {
 	gen := New(componentPkg)
 	return varName + " := " + gen.generateNode(node)
 }
+
+// GenerateNode 生成节点代码（公开方法）
+func (g *Generator) GenerateNode(node Node) string {
+	return g.generateNode(node)
+}

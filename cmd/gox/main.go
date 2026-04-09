@@ -122,7 +122,7 @@ func compileInputs(c *compiler.Compiler, inputs []string) {
 			outPath := *flagOut
 			if outPath == "" {
 				// 默认: .gox -> .go
-				outPath = input[:len(input)-1] + "o"
+				outPath = strings.TrimSuffix(input, ".gox") + ".go"
 			}
 
 			if err := os.WriteFile(outPath, output, 0644); err != nil {
@@ -159,7 +159,7 @@ func compileDir(c *compiler.Compiler, dir string) error {
 		}
 
 		// 输出路径: .gox -> .go
-		outPath := path[:len(path)-1] + "o"
+		outPath := strings.TrimSuffix(path, ".gox") + ".go"
 
 		if err := os.WriteFile(outPath, output, 0644); err != nil {
 			return fmt.Errorf("write %s: %w", outPath, err)
