@@ -4,20 +4,20 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/ayanmw/go-react-ink/pkg/components"
 	"github.com/ayanmw/go-react-ink/pkg/core"
-	"github.com/ayanmw/go-react-ink/pkg/hooks"
-	"github.com/ayanmw/go-react-ink/pkg/ink"
-	"github.com/ayanmw/go-react-ink/pkg/input"
 )
 
 // Spinner 动画帧
 var spinnerFrames = []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}
 
 // Progress bar 组件
-func ProgressBar(progress float64, width int) core.Element {
+func ProgressBar(progress float64, width int) string {
 	filled := int(progress * float64(width))
 	empty := width - filled
 
@@ -28,156 +28,147 @@ func ProgressBar(progress float64, width int) core.Element {
 	for i := 0; i < empty; i++ {
 		bar += "░"
 	}
-
-	return components.Text(core.Props{
-		"children": bar,
-		"color":    "green",
-	}, nil)
+	return bar
 }
 
-// App 主应用组件
-func App(ctx *hooks.HookContext) core.Element {
-	// 动画 Hook - 10 FPS
-	anim := input.UseAnimationController(ctx, 10)
-	anim.Play()
+// renderFrame 渲染一帧
+func renderFrame(frame int, progress float64) string {
+	spinnerFrame := spinnerFrames[frame%len(spinnerFrames)]
 
-	// 进度状态 - 从 0 开始，每帧增加
-	progress, setProgress := hooks.UseState(ctx, 0.0)
+	output := ""
 
-	// 帧计数
-	frame, setFrame := hooks.UseState(ctx, 0)
+	// 边框
+	output += "╭──────────────────────────────────────╮\n"
+	output += "│  🎬 Animation Demo (Real Animation)  │\n"
+	output += "╰──────────────────────────────────────╯\n"
+	output += "\n"
 
-	// 使用 UseEffect 监听动画帧变化
-	hooks.UseEffect(ctx, func() func() {
-		// 每 100ms 检查动画帧并更新进度
-		go func() {
-			ticker := time.NewTicker(100 * time.Millisecond)
-			defer ticker.Stop()
+	// Spinner 动画 - 实时更新
+	output += "Spinner:\n"
+	output += fmt.Sprintf("  \x1b[36m%s\x1b[0m Loading...\n\n", spinnerFrame)
 
-			for {
-				select {
-				case <-ticker.C:
-					currentFrame := anim.Frame()
-					setFrame(currentFrame)
+	// 进度条 - 实时更新
+	output += "Progress Bar:\n"
+	output += fmt.Sprintf("  \x1b[32m%s\x1b[0m %.0f%%\n\n", ProgressBar(progress, 20), progress*100)
 
-					// 每帧增加进度
-					currentProgress := progress.(float64)
-					newProgress := currentProgress + 0.02
-					if newProgress > 1.0 {
-						newProgress = 0.0 // 循环进度条
-					}
-					setProgress(newProgress)
-				}
-			}
-		}()
-		return func() {}
-	}, nil)
+	// 动画状态
+	output += "Animation State:\n"
+	output += fmt.Sprintf("  \x1b[33mFPS:\x1b[0m 10\n")
+	output += fmt.Sprintf("  \x1b[33mFrame:\x1b[0m %d\n", frame)
+	output += fmt.Sprintf("  \x1b[33mProgress:\x1b[0m \x1b[32m%.2f\x1b[0m\n\n", progress)
 
-	// 应用退出控制
-	app := input.UseApp(ctx)
+	// 帧序列
+	output += "Frame Sequence:\n"
+	output += fmt.Sprintf("  \x1b[2m%v\x1b[0m\n\n", spinnerFrames)
 
-	// 输入处理 - q 或 escape 退出
-	inputHook := input.UseInput(ctx, func(key input.Key) {
-		if key.Name == "q" || key.Name == "escape" {
-			app.Exit()
+	// 退出提示
+	output += "\x1b[2mPress Ctrl+C to exit\x1b[0m\n"
+
+	return output
+}
+
+// clearScreen 清屏
+func clearScreen() {
+	fmt.Print("\x1b[2J\x1b[H")
+}
+
+// moveCursorHome 移动光标到起始位置
+func moveCursorHome() {
+	fmt.Print("\x1b[H")
+}
+
+// hideCursor 隐藏光标
+func hideCursor() {
+	fmt.Print("\x1b[?25l")
+}
+
+// showCursor 显示光标
+func showCursor() {
+	fmt.Print("\x1b[?25h")
+}
+
+// clearLines 清除指定行数
+func clearLines(n int) {
+	for i := 0; i < n; i++ {
+		if i > 0 {
+			fmt.Print("\x1b[1B") // 移动到下一行
 		}
-	})
-	_ = inputHook // 使用 hook
-
-	// 渲染 UI
-	spinnerFrame := spinnerFrames[frame.(int)%len(spinnerFrames)]
-
-	return components.Box(core.Props{
-		"flexDirection": "column",
-		"padding":       1,
-		"borderStyle":   "round",
-		"borderColor":   "yellow",
-	}, []core.Element{
-		components.Text(core.Props{
-			"children": "🎬 Animation Demo (Real Animation)",
-			"color":    "yellow",
-			"bold":     true,
-		}, nil),
-		components.Newline(core.Props{}, nil),
-
-		// Spinner 动画 - 实时更新
-		components.Text(core.Props{"children": "Spinner:", "bold": true}, nil),
-		components.Box(core.Props{"flexDirection": "row", "margin": 1}, []core.Element{
-			components.Text(core.Props{
-				"children": spinnerFrame,
-				"color":    "cyan",
-			}, nil),
-			components.Spacer(core.Props{}, nil),
-			components.Text(core.Props{"children": "Loading..."}, nil),
-		}),
-
-		components.Newline(core.Props{}, nil),
-
-		// 进度条 - 实时更新
-		components.Text(core.Props{"children": "Progress Bar:", "bold": true}, nil),
-		components.Box(core.Props{"flexDirection": "row", "margin": 1}, []core.Element{
-			ProgressBar(progress.(float64), 20),
-			components.Spacer(core.Props{}, nil),
-			components.Text(core.Props{
-				"children": fmt.Sprintf("%.0f%%", progress.(float64)*100),
-				"color":    "green",
-			}, nil),
-		}),
-
-		components.Newline(core.Props{}, nil),
-
-		// 动画状态
-		components.Text(core.Props{"children": "Animation State:", "bold": true}, nil),
-		components.Box(core.Props{"flexDirection": "row", "margin": 1}, []core.Element{
-			components.Text(core.Props{"children": "FPS: ", "color": "yellow"}, nil),
-			components.Text(core.Props{"children": "10"}, nil),
-		}),
-		components.Box(core.Props{"flexDirection": "row", "margin": 1}, []core.Element{
-			components.Text(core.Props{"children": "Frame: ", "color": "yellow"}, nil),
-			components.Text(core.Props{"children": fmt.Sprintf("%d", frame.(int))}, nil),
-		}),
-		components.Box(core.Props{"flexDirection": "row", "margin": 1}, []core.Element{
-			components.Text(core.Props{"children": "Progress: ", "color": "yellow"}, nil),
-			components.Text(core.Props{
-				"children": fmt.Sprintf("%.2f", progress.(float64)),
-				"color":    "green",
-			}, nil),
-		}),
-
-		components.Newline(core.Props{}, nil),
-
-		// 帧序列
-		components.Text(core.Props{"children": "Frame Sequence:", "bold": true}, nil),
-		components.Box(core.Props{"flexDirection": "row", "margin": 1}, []core.Element{
-			components.Text(core.Props{
-				"children": fmt.Sprintf("%v", spinnerFrames),
-				"dim":      true,
-			}, nil),
-		}),
-
-		components.Newline(core.Props{}, nil),
-
-		// 退出提示
-		components.Text(core.Props{
-			"children": "Press 'q' or 'Escape' to exit",
-			"dim":      true,
-		}, nil),
-	})
+		fmt.Print("\x1b[2K") // 清除行
+		fmt.Print("\x1b[0G") // 移动到行首
+	}
+	if n > 1 {
+		fmt.Printf("\x1b[%dA", n-1) // 移动回第一行
+	}
 }
 
 func main() {
-	// 创建 Hook 上下文
-	ctx := hooks.NewHookContext()
+	// 隐藏光标
+	hideCursor()
+	defer showCursor()
 
-	// 渲染应用并启动动画循环
-	instance := ink.Render(App(ctx), &ink.RenderOptions{
-		MaxFps:      30,
-		Interactive: true,
-		ExitOnCtrlC: true,
-	})
+	// 处理 Ctrl+C
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 
-	// 等待退出
-	instance.WaitUntilExit()
+	// 动画状态
+	frame := 0
+	progress := 0.0
+	lastHeight := 0
 
-	fmt.Println("Animation demo exited cleanly")
+	// 动画循环
+	ticker := time.NewTicker(100 * time.Millisecond) // 10 FPS
+	defer ticker.Stop()
+
+	// 初始渲染
+	output := renderFrame(frame, progress)
+	fmt.Print(output)
+	lastHeight = countLines(output)
+
+	for {
+		select {
+		case <-ticker.C:
+			// 更新状态
+			frame++
+			progress += 0.02
+			if progress > 1.0 {
+				progress = 0.0
+			}
+
+			// 清除之前的输出
+			if lastHeight > 0 {
+				clearLines(lastHeight)
+			}
+
+			// 渲染新帧
+			output := renderFrame(frame, progress)
+			fmt.Print(output)
+			lastHeight = countLines(output)
+
+		case <-sigChan:
+			// 退出
+			fmt.Println("\nAnimation demo exited cleanly")
+			return
+		}
+	}
 }
+
+// countLines 计算行数
+func countLines(s string) int {
+	if s == "" {
+		return 0
+	}
+	lines := 0
+	for _, c := range s {
+		if c == '\n' {
+			lines++
+		}
+	}
+	if len(s) > 0 && s[len(s)-1] != '\n' {
+		lines++
+	}
+	return lines
+}
+
+// 确保组件包被引用
+var _ = components.Text
+var _ = core.Element(nil)
