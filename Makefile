@@ -52,7 +52,7 @@ build-gox: ## 构建 gox 编译器
 build-lsp: ## 构建 LSP Server
 	@echo "$(GREEN)构建 LSP Server...$(RESET)"
 	mkdir -p $(BIN_DIR)
-	GOPROXY=$(GOPROXY) $(GO) build $(LDFLAGS) -o $(BIN_DIR)/gox-lsp.exe ./tools/lsp-server
+	cd $(TOOLS_DIR)/lsp-server && GOPROXY=$(GOPROXY) $(GO) build $(LDFLAGS) -o ../../$(BIN_DIR)/gox-lsp.exe .
 	@echo "$(GREEN)✓ LSP Server 已构建: $(BIN_DIR)/gox-lsp.exe$(RESET)"
 
 .PHONY: build-all
