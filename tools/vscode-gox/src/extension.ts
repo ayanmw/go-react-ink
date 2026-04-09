@@ -201,7 +201,7 @@ function compileFile(filePath: string) {
     const goxPath = config.get<string>('goxPath') || 'gox';
 
     // Output path: .gox -> .go
-    const outputPath = filePath.slice(0, -1) + 'o';
+    const outputPath = filePath.replace(/\.gox$/, '.go');
 
     const cmd = `${goxPath} -o "${outputPath}" "${filePath}"`;
     outputChannel.appendLine(`Running: ${cmd}`);
