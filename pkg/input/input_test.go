@@ -47,12 +47,12 @@ func TestUseApp(t *testing.T) {
 	app := UseApp(ctx)
 
 	if app == nil {
-		t.Fatal("UseApp should return AppHook")
+		t.Fatal("UseApp should return AppController")
 	}
 
-	if app.Exit == nil {
-		t.Error("Exit should not be nil")
-	}
+	// AppController has Exit method, not a function field
+	// Just verify it's not nil and can be called
+	app.Exit() // Should not panic even without instance
 }
 
 func TestUseFocus(t *testing.T) {

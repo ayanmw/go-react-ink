@@ -34,6 +34,84 @@ func NewScheduler() *Scheduler {
 	}
 }
 
+// Render 渲染元素并返回输出
+func (s *Scheduler) Render(element any) string {
+	// 创建根 Fiber
+	rootFiber := NewFiber(TagRoot, element, "")
+
+	// 创建 RootFiber
+	s.root = &RootFiber{
+		Current: rootFiber,
+	}
+
+	// 创建工作树
+	s.workRoot = CreateWorkInProgress(rootFiber, element)
+	s.nextUnitOfWork = s.workRoot
+	s.isWorking = true
+
+	// 执行工作循环
+	for s.nextUnitOfWork != nil {
+		s.PerformUnitOfWork(s.nextUnitOfWork)
+	}
+
+	// 提交
+	s.CommitRoot()
+
+	// 渲染为字符串
+	return s.renderToString(s.workRoot)
+}
+
+// renderToString 将 Fiber 树渲染为字符串
+func (s *Scheduler) renderToString(fiber *Fiber) string {
+	if fiber == nil {
+		return ""
+	}
+
+	var result string
+
+	// 处理当前节点
+	switch fiber.Tag {
+	case TagHostText:
+		if fiber.StateNode != nil {
+			result += fiber.StateNode.(string)
+		}
+
+	case TagHostComponent:
+		// 处理子节点
+		child := fiber.Child
+		for child != nil {
+			result += s.renderToString(child)
+			child = child.Sibling
+		}
+
+	case TagFunctionComponent:
+		// 处理子节点
+		child := fiber.Child
+		for child != nil {
+			result += s.renderToString(child)
+			child = child.Sibling
+		}
+
+	case TagFragment:
+		// 处理子节点
+		child := fiber.Child
+		for child != nil {
+			result += s.renderToString(child)
+			child = child.Sibling
+		}
+
+	case TagRoot:
+		// 处理子节点
+		child := fiber.Child
+		for child != nil {
+			result += s.renderToString(child)
+			child = child.Sibling
+		}
+	}
+
+	return result
+}
+
 // ScheduleUpdate 调度更新
 func (s *Scheduler) ScheduleUpdate(root *RootFiber) {
 	s.root = root

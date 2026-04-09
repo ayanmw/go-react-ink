@@ -151,7 +151,7 @@ func B() Element {
 
 	// 检查生成的文件
 	for name := range files {
-		goPath := filepath.Join(testDir, name[:len(name)-1]+"o")
+		goPath := filepath.Join(testDir, name[:len(name)-4]+".go")
 		if _, err := os.Stat(goPath); os.IsNotExist(err) {
 			t.Errorf("Generated file not found: %s", goPath)
 		}

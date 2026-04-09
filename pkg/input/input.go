@@ -59,15 +59,15 @@ func (h *Hook) ProcessKey(key Key) {
 	}
 }
 
-// AppHook 应用 Hook
+// AppHook 应用 Hook (deprecated: use AppController from app.go)
 type AppHook struct {
 	Exit   func()
 	Stdin  interface{}
 	Stdout interface{}
 }
 
-// UseApp 应用 Hook
-func UseApp(ctx *hooks.HookContext) *AppHook {
+// UseAppLegacy 应用 Hook (deprecated: use UseApp from app.go)
+func UseAppLegacy(ctx *hooks.HookContext) *AppHook {
 	return &AppHook{
 		Exit: func() {
 			// 退出应用
