@@ -160,14 +160,9 @@ func (ink *Ink) StartRenderLoop() {
 	ink.isRunning = true
 	ink.mu.Unlock()
 
-	// 隐藏光标
+	// 初始化终端 (使用备用屏幕缓冲区)
 	if ink.options.Interactive {
-		ink.options.Stdout.Write([]byte(ANSIHideCursor))
-	}
-
-	// 启用备用屏幕缓冲
-	if ink.options.AlternateScreen {
-		ink.options.Stdout.Write([]byte(ANSIEnableAlternateScreen))
+		ink.log.Initialize()
 	}
 
 	// 创建节流定时器
@@ -241,15 +236,7 @@ func (ink *Ink) Unmount(result ...any) {
 	ink.onRender()
 
 	// 恢复终端状态
-	if ink.options.Interactive {
-		// 显示光标
-		ink.options.Stdout.Write([]byte(ANSIShowCursor))
-	}
-
-	// 退出备用屏幕缓冲
-	if ink.options.AlternateScreen {
-		ink.options.Stdout.Write([]byte(ANSIDisableAlternateScreen))
-	}
+	ink.log.Done()
 
 	// 发送退出信号
 	var exitResult any

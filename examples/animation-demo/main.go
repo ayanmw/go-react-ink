@@ -1,5 +1,5 @@
 // Animation Demo 示例 - 演示动画和帧更新
-// 使用 ink.Render 实现真正的动画效果
+// 使用 TUI 渲染实现真正的动画效果
 package main
 
 import (
@@ -8,9 +8,6 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-
-	"github.com/ayanmw/go-react-ink/pkg/components"
-	"github.com/ayanmw/go-react-ink/pkg/core"
 )
 
 // Spinner 动画帧
@@ -22,10 +19,10 @@ func ProgressBar(progress float64, width int) string {
 	empty := width - filled
 
 	bar := ""
-	for i := 0; i < filled; i++ {
+	for range filled {
 		bar += "█"
 	}
-	for i := 0; i < empty; i++ {
+	for range empty {
 		bar += "░"
 	}
 	return bar
@@ -53,7 +50,7 @@ func renderFrame(frame int, progress float64) string {
 
 	// 动画状态
 	output += "Animation State:\n"
-	output += fmt.Sprintf("  \x1b[33mFPS:\x1b[0m 10\n")
+	output += "  \x1b[33mFPS:\x1b[0m 10\n"
 	output += fmt.Sprintf("  \x1b[33mFrame:\x1b[0m %d\n", frame)
 	output += fmt.Sprintf("  \x1b[33mProgress:\x1b[0m \x1b[32m%.2f\x1b[0m\n\n", progress)
 
@@ -62,49 +59,38 @@ func renderFrame(frame int, progress float64) string {
 	output += fmt.Sprintf("  \x1b[2m%v\x1b[0m\n\n", spinnerFrames)
 
 	// 退出提示
-	output += "\x1b[2mPress Ctrl+C to exit\x1b[0m\n"
+	output += "\x1b[2mPress Ctrl+C to exit\x1b[0m"
 
 	return output
 }
 
-// clearScreen 清屏
-func clearScreen() {
-	fmt.Print("\x1b[2J\x1b[H")
-}
-
-// moveCursorHome 移动光标到起始位置
-func moveCursorHome() {
-	fmt.Print("\x1b[H")
-}
-
-// hideCursor 隐藏光标
-func hideCursor() {
-	fmt.Print("\x1b[?25l")
-}
-
-// showCursor 显示光标
-func showCursor() {
-	fmt.Print("\x1b[?25h")
-}
-
-// clearLines 清除指定行数
-func clearLines(n int) {
-	for i := 0; i < n; i++ {
-		if i > 0 {
-			fmt.Print("\x1b[1B") // 移动到下一行
-		}
-		fmt.Print("\x1b[2K") // 清除行
-		fmt.Print("\x1b[0G") // 移动到行首
-	}
-	if n > 1 {
-		fmt.Printf("\x1b[%dA", n-1) // 移动回第一行
-	}
-}
+// Terminal ANSI 控制序列
+const (
+	hideCursor              = "\x1b[?25l"
+	showCursor              = "\x1b[?25h"
+	alternateScreenOn       = "\x1b[?1049h"
+	alternateScreenOff      = "\x1b[?1049l"
+	clearScreen             = "\x1b[2J"
+	moveCursorHome          = "\x1b[H"
+	clearFromCursorToEnd    = "\x1b[0J"
+	saveCursorPosition      = "\x1b[s"
+	restoreCursorPosition   = "\x1b[u"
+)
 
 func main() {
+	// 启用备用屏幕缓冲区 (退出时恢复原屏幕)
+	fmt.Print(alternateScreenOn)
+	defer fmt.Print(alternateScreenOff)
+
 	// 隐藏光标
-	hideCursor()
-	defer showCursor()
+	fmt.Print(hideCursor)
+	defer fmt.Print(showCursor)
+
+	// 清屏
+	fmt.Print(clearScreen + moveCursorHome)
+
+	// 保存光标位置
+	fmt.Print(saveCursorPosition)
 
 	// 处理 Ctrl+C
 	sigChan := make(chan os.Signal, 1)
@@ -113,16 +99,14 @@ func main() {
 	// 动画状态
 	frame := 0
 	progress := 0.0
-	lastHeight := 0
 
-	// 动画循环
-	ticker := time.NewTicker(100 * time.Millisecond) // 10 FPS
+	// 动画循环 (10 FPS)
+	ticker := time.NewTicker(100 * time.Millisecond)
 	defer ticker.Stop()
 
 	// 初始渲染
 	output := renderFrame(frame, progress)
 	fmt.Print(output)
-	lastHeight = countLines(output)
 
 	for {
 		select {
@@ -134,41 +118,16 @@ func main() {
 				progress = 0.0
 			}
 
-			// 清除之前的输出
-			if lastHeight > 0 {
-				clearLines(lastHeight)
-			}
+			// 恢复光标位置并清除屏幕
+			fmt.Print(restoreCursorPosition + clearFromCursorToEnd)
 
 			// 渲染新帧
 			output := renderFrame(frame, progress)
 			fmt.Print(output)
-			lastHeight = countLines(output)
 
 		case <-sigChan:
-			// 退出
-			fmt.Println("\nAnimation demo exited cleanly")
+			// 退出 (defer 会处理恢复终端状态)
 			return
 		}
 	}
 }
-
-// countLines 计算行数
-func countLines(s string) int {
-	if s == "" {
-		return 0
-	}
-	lines := 0
-	for _, c := range s {
-		if c == '\n' {
-			lines++
-		}
-	}
-	if len(s) > 0 && s[len(s)-1] != '\n' {
-		lines++
-	}
-	return lines
-}
-
-// 确保组件包被引用
-var _ = components.Text
-var _ = core.Element(nil)

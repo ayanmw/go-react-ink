@@ -12,6 +12,7 @@ type LogUpdate struct {
 	stdout     io.Writer
 	lastOutput string
 	lastHeight int
+	initialized bool
 }
 
 // NewLogUpdate 创建新的输出管理器
@@ -21,15 +22,47 @@ func NewLogUpdate(stdout io.Writer) *LogUpdate {
 	}
 }
 
-// Write 写入新输出，自动清除之前的输出
-func (l *LogUpdate) Write(output string) error {
-	// 计算新输出的行数
-	newHeight := countLines(output)
-
-	// 如果之前有输出，先清除
-	if l.lastHeight > 0 {
-		l.clearPrevious()
+// Initialize 初始化终端 (启用备用屏幕缓冲)
+func (l *LogUpdate) Initialize() error {
+	if l.initialized {
+		return nil
 	}
+
+	// 启用备用屏幕缓冲区
+	l.stdout.Write([]byte(ANSIEnableAlternateScreen))
+	// 隐藏光标
+	l.stdout.Write([]byte(ANSIHideCursor))
+	// 清屏
+	l.stdout.Write([]byte(ANSIClearScreen))
+	// 移动光标到起始位置
+	l.stdout.Write([]byte(ANSIMoveCursorHome))
+
+	l.initialized = true
+	return nil
+}
+
+// Done 完成输出，恢复终端状态
+func (l *LogUpdate) Done() {
+	if !l.initialized {
+		return
+	}
+
+	// 显示光标
+	l.stdout.Write([]byte(ANSIShowCursor))
+	// 禁用备用屏幕缓冲区 (恢复原屏幕内容)
+	l.stdout.Write([]byte(ANSIDisableAlternateScreen))
+
+	l.lastOutput = ""
+	l.lastHeight = 0
+	l.initialized = false
+}
+
+// Write 写入新输出
+func (l *LogUpdate) Write(output string) error {
+	// 移动光标到起始位置
+	l.stdout.Write([]byte(ANSIMoveCursorHome))
+	// 清除从光标到屏幕末尾的内容
+	l.stdout.Write([]byte("\x1b[0J"))
 
 	// 写入新输出
 	_, err := l.stdout.Write([]byte(output))
@@ -38,60 +71,20 @@ func (l *LogUpdate) Write(output string) error {
 	}
 
 	l.lastOutput = output
-	l.lastHeight = newHeight
+	l.lastHeight = countLines(output)
 	return nil
 }
 
 // Clear 清除所有输出
 func (l *LogUpdate) Clear() error {
-	if l.lastHeight == 0 {
-		return nil
-	}
+	// 移动光标到起始位置
+	l.stdout.Write([]byte(ANSIMoveCursorHome))
+	// 清除从光标到屏幕末尾的内容
+	l.stdout.Write([]byte("\x1b[0J"))
 
-	l.clearPrevious()
 	l.lastOutput = ""
 	l.lastHeight = 0
 	return nil
-}
-
-// Done 完成输出，保留最后一帧
-func (l *LogUpdate) Done() {
-	// 显示光标
-	l.stdout.Write([]byte("\x1b[?25h"))
-	l.lastOutput = ""
-	l.lastHeight = 0
-}
-
-// clearPrevious 清除之前的输出
-func (l *LogUpdate) clearPrevious() {
-	if l.lastHeight <= 0 {
-		return
-	}
-
-	// 移动光标到之前输出的开头
-	// 先移动到行首
-	l.stdout.Write([]byte("\x1b[0G"))
-	// 向上移动 lastHeight-1 行
-	if l.lastHeight > 1 {
-		l.stdout.Write([]byte("\x1b[" + intToStr(l.lastHeight-1) + "A"))
-	}
-
-	// 清除每一行
-	for i := 0; i < l.lastHeight; i++ {
-		if i > 0 {
-			// 移动到下一行
-			l.stdout.Write([]byte("\x1b[1B"))
-		}
-		// 清除当前行
-		l.stdout.Write([]byte("\x1b[2K"))
-		// 移动到行首
-		l.stdout.Write([]byte("\x1b[0G"))
-	}
-
-	// 移动回第一行
-	if l.lastHeight > 1 {
-		l.stdout.Write([]byte("\x1b[" + intToStr(l.lastHeight-1) + "A"))
-	}
 }
 
 // countLines 计算字符串的行数

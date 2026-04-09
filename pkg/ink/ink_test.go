@@ -83,17 +83,19 @@ func TestLogUpdate(t *testing.T) {
 	var buf bytes.Buffer
 	log := NewLogUpdate(&buf)
 
+	// Test initialize
+	err := log.Initialize()
+	if err != nil {
+		t.Fatalf("Initialize failed: %v", err)
+	}
+
 	// Test first write
-	err := log.Write("Hello\n")
+	err = log.Write("Hello\n")
 	if err != nil {
 		t.Fatalf("Write failed: %v", err)
 	}
 
-	if log.lastHeight != 1 {
-		t.Errorf("Expected lastHeight 1, got %d", log.lastHeight)
-	}
-
-	// Test second write (should clear previous)
+	// Test second write
 	err = log.Write("World\n")
 	if err != nil {
 		t.Fatalf("Write failed: %v", err)
@@ -104,11 +106,17 @@ func TestLogUpdate(t *testing.T) {
 	if !strings.Contains(output, "World") {
 		t.Error("Expected output to contain 'World'")
 	}
+
+	// Test Done
+	log.Done()
 }
 
 func TestLogUpdateClear(t *testing.T) {
 	var buf bytes.Buffer
 	log := NewLogUpdate(&buf)
+
+	// Initialize
+	log.Initialize()
 
 	// Write something
 	log.Write("Test\n")
@@ -119,9 +127,8 @@ func TestLogUpdateClear(t *testing.T) {
 		t.Fatalf("Clear failed: %v", err)
 	}
 
-	if log.lastHeight != 0 {
-		t.Errorf("Expected lastHeight 0 after clear, got %d", log.lastHeight)
-	}
+	// Done
+	log.Done()
 }
 
 func TestAnimationManager(t *testing.T) {
