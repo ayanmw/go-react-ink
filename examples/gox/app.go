@@ -4,8 +4,7 @@
 package main
 
 import (
-	"github.com/ayanmw/go-react-ink/pkg/components"
-	"github.com/ayanmw/go-react-ink/pkg/components/ink"
+	ink "github.com/ayanmw/go-react-ink/pkg/components"
 	"github.com/ayanmw/go-react-ink/pkg/core"
 )
 

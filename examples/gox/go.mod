@@ -1,4 +1,4 @@
-module github.com/ayanmw/go-react-ink/examples/animation-demo
+module github.com/ayanmw/go-react-ink/examples/gox
 
 go 1.22
 
