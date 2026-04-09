@@ -29,8 +29,6 @@ class GoxLexer(reader: Reader?) : com.intellij.lexer.FlexLexer {
 
     override fun yybegin(newState: Int) {}
     override fun yystate(): Int = if (inJSX) 1 else 0
-    override fun getBufferEnd(): Int = endOffset
-    override fun getBufferSequence(): CharSequence = buffer
 
     override fun advance(): IElementType? {
         if (position >= endOffset) {
@@ -208,7 +206,6 @@ class GoxLexer(reader: Reader?) : com.intellij.lexer.FlexLexer {
 
     override fun getTokenStart(): Int = tokenStart
     override fun getTokenEnd(): Int = tokenEnd
-    override fun getTokenType(): IElementType? = currentToken
 
     override fun reset(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
         this.buffer = buffer

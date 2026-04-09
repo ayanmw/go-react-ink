@@ -7,6 +7,5 @@ import com.intellij.lang.Language
  */
 object GoxLanguage : Language("GoX") {
     override fun getDisplayName(): String = "GoX"
-    override fun getMimeType(): String = "text/x-gox"
     override fun getAssociatedFileType(): GoxFileType = GoxFileType.INSTANCE
 }

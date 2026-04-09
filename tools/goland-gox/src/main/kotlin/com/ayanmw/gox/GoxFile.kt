@@ -1,7 +1,7 @@
 package com.ayanmw.gox
 
+import com.intellij.extapi.psi.PsiFileBase
 import com.intellij.psi.FileViewProvider
-import com.intellij.psi.PsiFileBase
 
 /**
  * GoX PSI File

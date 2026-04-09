@@ -1,8 +1,8 @@
 package com.ayanmw.gox
 
-import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
+import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.psi.PsiElement
 
 /**
@@ -12,7 +12,7 @@ class GoxAnnotator : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         // Basic validation - check for unclosed JSX tags
         if (element.text.startsWith("<") && !element.text.contains(">")) {
-            holder.newAnnotation(HighlightInfo.HighlightSeverity.ERROR, "Unclosed JSX tag")
+            holder.newAnnotation(HighlightSeverity.ERROR, "Unclosed JSX tag")
                 .range(element.textRange)
                 .create()
         }

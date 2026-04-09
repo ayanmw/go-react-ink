@@ -132,24 +132,17 @@ plugin: plugin-goland plugin-vscode ## 构建所有插件
 .PHONY: plugin-goland
 plugin-goland: ## 构建 GoLand 插件
 	@echo "$(GREEN)构建 GoLand 插件...$(RESET)"
-	@if [ ! -f "$(TOOLS_DIR)/goland-gox/gradlew" ]; then \
-		echo "$(YELLOW)Gradle wrapper 不存在，检查 Gradle...$(RESET)"; \
-		if ! command -v gradle &> /dev/null; then \
-			echo "$(YELLOW)Gradle 未安装，尝试安装...$(RESET)"; \
-			if command -v sdk &> /dev/null; then \
-				sdk install gradle; \
-			elif command -v brew &> /dev/null; then \
-				brew install gradle; \
-			elif command -v apt-get &> /dev/null; then \
-				sudo apt-get install -y gradle; \
-			else \
-				echo "$(RED)✗ 无法自动安装 Gradle，请手动安装: https://gradle.org/install/$(RESET)"; \
-				exit 1; \
-			fi; \
+	@# 检测 JAVA_HOME
+	@if [ -z "$$JAVA_HOME" ]; then \
+		if [ -d "C:/Users/anmingwei/AppData/Local/Programs/PyCharm/jbr" ]; then \
+			export JAVA_HOME="C:/Users/anmingwei/AppData/Local/Programs/PyCharm/jbr"; \
+			echo "$(YELLOW)使用 PyCharm JBR: $$JAVA_HOME$(RESET)"; \
+		elif [ -d "$$HOME/.jdks" ]; then \
+			export JAVA_HOME=$$(ls -d $$HOME/.jdks/* | head -1); \
 		fi; \
-		cd $(TOOLS_DIR)/goland-gox && gradle wrapper; \
 	fi
-	@cd $(TOOLS_DIR)/goland-gox && ./gradlew buildPlugin
+	@# 构建
+	cd $(TOOLS_DIR)/goland-gox && JAVA_HOME="C:/Users/anmingwei/AppData/Local/Programs/PyCharm/jbr" PATH="C:/Users/anmingwei/AppData/Local/Programs/PyCharm/jbr/bin:$$PATH" ./gradlew buildPlugin --no-daemon
 	@echo "$(GREEN)✓ GoLand 插件: $(TOOLS_DIR)/goland-gox/build/distributions/$(RESET)"
 
 .PHONY: plugin-vscode

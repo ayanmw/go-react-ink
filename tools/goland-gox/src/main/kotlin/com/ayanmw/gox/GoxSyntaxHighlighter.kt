@@ -43,9 +43,9 @@ class GoxSyntaxHighlighter : SyntaxHighlighter {
 
         // JSX
         val JSX_TAG = TextAttributesKey.createTextAttributesKey("GOX_JSX_TAG", Defaults.MARKUP_TAG)
-        val JSX_TAG_NAME = TextAttributesKey.createTextAttributesKey("GOX_JSX_TAG_NAME", Defaults.MARKUP_TAG_NAME)
+        val JSX_TAG_NAME = TextAttributesKey.createTextAttributesKey("GOX_JSX_TAG_NAME", Defaults.KEYWORD)
         val JSX_ATTR_NAME = TextAttributesKey.createTextAttributesKey("GOX_JSX_ATTR_NAME", Defaults.MARKUP_ATTRIBUTE)
-        val JSX_ATTR_VALUE = TextAttributesKey.createTextAttributesKey("GOX_JSX_ATTR_VALUE", Defaults.MARKUP_ENTITY)
+        val JSX_ATTR_VALUE = TextAttributesKey.createTextAttributesKey("GOX_JSX_ATTR_VALUE", Defaults.STRING)
         val JSX_EXPR = TextAttributesKey.createTextAttributesKey("GOX_JSX_EXPR", Defaults.TEMPLATE_LANGUAGE_COLOR)
 
         // Identifiers

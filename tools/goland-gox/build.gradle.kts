@@ -23,20 +23,20 @@ intellij {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
 }
 
 tasks {
     // Set the JVM compatibility versions
     withType<JavaCompile> {
-        sourceCompatibility = "17"
-        targetCompatibility = "17"
+        sourceCompatibility = "21"
+        targetCompatibility = "21"
         options.encoding = "UTF-8"
     }
 
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions {
-            jvmTarget = "17"
+            jvmTarget = "21"
             freeCompilerArgs = listOf("-Xjsr305=strict")
         }
     }
@@ -46,15 +46,17 @@ tasks {
         untilBuild.set("243.*")
     }
 
-    signPlugin {
-        certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
-        privateKey.set(System.getenv("PRIVATE_KEY"))
-        privateKeyPassword.set(System.getenv("PRIVATE_KEY_PASSWORD"))
-    }
+    // 签名配置 - 仅发布时需要
+    // signPlugin {
+    //     certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
+    //     privateKey.set(System.getenv("PRIVATE_KEY"))
+    //     privateKeyPassword.set(System.getenv("PRIVATE_KEY_PASSWORD"))
+    // }
 
-    publishPlugin {
-        token.set(System.getenv("PUBLISH_TOKEN"))
-    }
+    // 发布配置 - 仅发布时需要
+    // publishPlugin {
+    //     token.set(System.getenv("PUBLISH_TOKEN"))
+    // }
 }
 
 dependencies {

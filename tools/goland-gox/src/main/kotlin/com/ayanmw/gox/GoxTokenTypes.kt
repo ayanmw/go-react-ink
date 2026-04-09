@@ -118,7 +118,7 @@ object GoxTokenTypes {
 
     object Factory {
         fun createElement(node: com.intellij.lang.ASTNode): com.intellij.psi.PsiElement {
-            return com.intellij.psi.impl.source.tree.LeafPsiElementImpl(node.elementType, node.text)
+            return com.intellij.psi.impl.source.tree.LeafPsiElement(node.elementType, node.text)
         }
     }
 }
