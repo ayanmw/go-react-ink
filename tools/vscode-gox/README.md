@@ -41,9 +41,9 @@ VSCode 扩展，为 `.gox` 文件提供语法高亮和语言支持。
 
 ```bash
 cd tools/vscode-gox
-npm install
-npm run compile
-vsce package  # 需要: npm install -g @vscode/vsce
+bun install
+bun run compile
+vsce package  # 需要: bun install -g @vscode/vsce
 ```
 
 ## 使用
@@ -90,7 +90,7 @@ go run app.go
 ## 相关链接
 
 - [Go-React-Ink](https://github.com/ayanmw/go-react-ink) - 主项目
-- [GoLand Plugin](../goland-gox) - GoLand IDE 插件
+- [GoLand Plugin](https://github.com/ayanmw/go-react-ink/tree/main/tools/goland-gox) - GoLand IDE 插件
 
 ## 许可证
 

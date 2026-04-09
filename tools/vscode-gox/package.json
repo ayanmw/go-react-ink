@@ -4,6 +4,12 @@
   "description": "Syntax highlighting and language support for .gox files (Go with JSX)",
   "version": "0.1.0",
   "publisher": "ayanmw",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ayanmw/go-react-ink.git",
+    "directory": "tools/vscode-gox"
+  },
   "engines": {
     "vscode": "^1.60.0"
   },

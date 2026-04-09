@@ -132,14 +132,55 @@ plugin: plugin-goland plugin-vscode ## 构建所有插件
 .PHONY: plugin-goland
 plugin-goland: ## 构建 GoLand 插件
 	@echo "$(GREEN)构建 GoLand 插件...$(RESET)"
-	cd $(TOOLS_DIR)/goland-gox && ./gradlew buildPlugin
+	@if [ ! -f "$(TOOLS_DIR)/goland-gox/gradlew" ]; then \
+		echo "$(YELLOW)Gradle wrapper 不存在，检查 Gradle...$(RESET)"; \
+		if ! command -v gradle &> /dev/null; then \
+			echo "$(YELLOW)Gradle 未安装，尝试安装...$(RESET)"; \
+			if command -v sdk &> /dev/null; then \
+				sdk install gradle; \
+			elif command -v brew &> /dev/null; then \
+				brew install gradle; \
+			elif command -v apt-get &> /dev/null; then \
+				sudo apt-get install -y gradle; \
+			else \
+				echo "$(RED)✗ 无法自动安装 Gradle，请手动安装: https://gradle.org/install/$(RESET)"; \
+				exit 1; \
+			fi; \
+		fi; \
+		cd $(TOOLS_DIR)/goland-gox && gradle wrapper; \
+	fi
+	@cd $(TOOLS_DIR)/goland-gox && ./gradlew buildPlugin
 	@echo "$(GREEN)✓ GoLand 插件: $(TOOLS_DIR)/goland-gox/build/distributions/$(RESET)"
 
 .PHONY: plugin-vscode
 plugin-vscode: ## 构建 VSCode 插件
 	@echo "$(GREEN)构建 VSCode 插件...$(RESET)"
-	cd $(TOOLS_DIR)/vscode-gox && npm install && npm run compile
+	@if ! command -v bun &> /dev/null; then \
+		echo "$(YELLOW)Bun 未安装，尝试安装...$(RESET)"; \
+		if command -v curl &> /dev/null; then \
+			curl -fsSL https://bun.sh/install | bash; \
+		elif command -v powershell &> /dev/null; then \
+			powershell -c "irm bun.sh/install.ps1 | iex"; \
+		else \
+			echo "$(RED)✗ 无法自动安装 Bun，请手动安装: https://bun.sh$(RESET)"; \
+			exit 1; \
+		fi; \
+	fi
+	@cd $(TOOLS_DIR)/vscode-gox && bun install && bun run compile
 	@echo "$(GREEN)✓ VSCode 插件构建完成$(RESET)"
+
+.PHONY: plugin-package
+plugin-package: plugin-goland plugin-vscode ## 打包插件为可发布文件
+	@echo "$(GREEN)打包插件...$(RESET)"
+	@mkdir -p $(BIN_DIR)/plugins
+	@# GoLand 插件
+	@if [ -d "$(TOOLS_DIR)/goland-gox/build/distributions" ]; then \
+		cp $(TOOLS_DIR)/goland-gox/build/distributions/*.zip $(BIN_DIR)/plugins/ 2>/dev/null || true; \
+	fi
+	@# VSCode 插件
+	@cd $(TOOLS_DIR)/vscode-gox && bun x vsce package --allow-missing-repository --out ../../$(BIN_DIR)/plugins/
+	@echo "$(GREEN)✓ 插件已打包到: $(BIN_DIR)/plugins/$(RESET)"
+	@ls -la $(BIN_DIR)/plugins/ 2>/dev/null || echo "$(YELLOW)没有生成插件包$(RESET)"
 
 .PHONY: plugin-run-ide
 plugin-run-ide: ## 运行 GoLand 插件开发模式
