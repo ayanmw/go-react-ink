@@ -1,0 +1,20 @@
+package main
+
+import (
+    "github.com/ayanmw/go-react-ink/pkg/core"
+    "github.com/ayanmw/go-react-ink/pkg/components"
+)
+
+func App() core.Element {
+    return (
+        <Box flexDirection="column">
+            <Text color="green">Hello, World!</Text>
+            <Text>Count: 42</Text>
+        </Box>
+    )
+}
+
+func main() {
+    app := App()
+    println(app.Render())
+}
