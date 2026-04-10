@@ -1,21 +1,22 @@
-# Go-Ink 设计文档索引
+# Go-Ink 开发文档
 
 > 使用 Golang 复刻 React Ink 完整框架实现
 
-## 文档列表
+## 文档结构
 
-| 文档 | 内容 | 状态 |
-|-----|------|------|
-| [01-overview.md](./01-overview.md) | 项目概览、架构设计、核心决策 | ✅ 完成 |
-| [02-jsx-parser.md](./02-jsx-parser.md) | JSX 解析器设计 (Scanner/Lexer/Parser) | ✅ 完成 |
-| [03-expr-transform.md](./03-expr-transform.md) | 表达式转换规则 (JS → Go) | ✅ 完成 |
-| [04-codegen.md](./04-codegen.md) | 代码生成器设计 (AST → Go 代码) | ✅ 完成 |
-| [05-toolchain.md](./05-toolchain.md) | 工具链集成 (CLI/IDE/LSP) | ✅ 完成 |
-| [06-reconciler.md](./06-reconciler.md) | React 协调器设计 (Fiber 架构) | ✅ 完成 |
-| [07-layout.md](./07-layout.md) | Flexbox 布局引擎 | ✅ 完成 |
-| [08-renderer.md](./08-renderer.md) | 终端渲染器 (增量渲染) | ✅ 完成 |
-| [09-components.md](./09-components.md) | 内置组件 (Box/Text/Spacer 等) | ✅ 完成 |
-| [10-hooks.md](./10-hooks.md) | React Hooks 复刻 | ✅ 完成 |
+- **用户文档**: 项目根目录 `README.md`
+- **开发文档**: `openspec/specs/` 目录下的规格文档
+
+## Specs 规格文档
+
+| Spec | 内容 | React Ink 对齐 |
+|-----|------|---------------|
+| [compiler](./specs/compiler/spec.md) | JSX 编译器 (Scanner/Lexer/Parser/CodeGen) | ✅ 完全对齐 |
+| [renderer](./specs/renderer/spec.md) | 终端渲染器 (增量渲染/TTY/信号/动画) | ✅ 完全对齐 |
+| [reconciler](./specs/reconciler/spec.md) | Fiber 协调器 (调度/Diff/工作循环) | ✅ 完全对齐 |
+| [layout](./specs/layout/spec.md) | Flexbox 布局引擎 | ✅ 完全对齐 |
+| [components](./specs/components/spec.md) | 内置组件 (Box/Text/Static 等) | ✅ 完全对齐 |
+| [hooks](./specs/hooks/spec.md) | React Hooks (useState/useEffect 等) | ✅ 完全对齐 |
 
 ---
 
@@ -49,6 +50,70 @@
 
 ---
 
+## React Ink 核心技术对齐
+
+### 编译器 (compiler)
+| 特性 | React Ink | Go-Ink |
+|-----|-----------|--------|
+| JSX 语法 | ✅ Babel | ✅ gox-compiler |
+| 嵌套元素 | ✅ | ✅ |
+| 表达式 `{}` | ✅ | ✅ |
+| 属性展开 | ✅ | ✅ |
+| 条件渲染 | ✅ | ✅ |
+| 列表渲染 | ✅ | ✅ |
+
+### 渲染器 (renderer)
+| 特性 | React Ink | Go-Ink |
+|-----|-----------|--------|
+| 增量渲染 | ✅ log-update | ✅ LogUpdate |
+| 备用屏幕缓冲 | ✅ | ✅ |
+| TTY 检测 | ✅ | ✅ |
+| 信号处理 | ✅ | ✅ |
+| FPS 节流 | ✅ | ✅ |
+| 动画系统 | ✅ | ✅ |
+
+### 协调器 (reconciler)
+| 特性 | React Ink | Go-Ink |
+|-----|-----------|--------|
+| Fiber 架构 | ✅ react-reconciler | ✅ |
+| 双缓冲 | ✅ | ✅ |
+| 调度器 | ✅ | ✅ |
+| Diff 算法 | ✅ | ✅ |
+
+### 布局 (layout)
+| 特性 | React Ink | Go-Ink |
+|-----|-----------|--------|
+| Flexbox | ✅ Yoga | ✅ |
+| flexDirection | ✅ | ✅ |
+| justifyContent | ✅ | ✅ |
+| alignItems | ✅ | ✅ |
+| flexGrow/shrink | ✅ | ✅ |
+
+### 组件 (components)
+| 组件 | React Ink | Go-Ink |
+|-----|-----------|--------|
+| Box | ✅ | ✅ |
+| Text | ✅ | ✅ |
+| Static | ✅ | ✅ |
+| Newline | ✅ | ✅ |
+| Spacer | ✅ | ✅ |
+| Transform | ✅ | ✅ |
+
+### Hooks
+| Hook | React Ink | Go-Ink |
+|-----|-----------|--------|
+| useState | ✅ | ✅ |
+| useEffect | ✅ | ✅ |
+| useInput | ✅ | ✅ |
+| useApp | ✅ | ✅ |
+| useFocus | ✅ | ✅ |
+| useAnimation | ✅ | ✅ |
+| useMemo | ✅ | ✅ |
+| useRef | ✅ | ✅ |
+| useContext | ✅ | ✅ |
+
+---
+
 ## 模块依赖关系
 
 ```
@@ -65,8 +130,7 @@ go-ink (运行时)
     ├── layout (Flexbox)
     │   └── 依赖 core
     ├── renderer (渲染器)
-    │   ├── 依赖 core
-    │   └── 依赖 layout
+    │   └── 依赖 core, layout
     ├── components (内置组件)
     │   └── 依赖 core
     └── hooks (状态管理)
@@ -75,57 +139,21 @@ go-ink (运行时)
 
 ---
 
-## 开发优先级
+## 开发状态
 
-### Phase 1: 编译器 (已完成设计)
-1. ✅ JSX 解析器
-2. ✅ 表达式转换
-3. ✅ 代码生成器
-4. ✅ CLI 工具
-
-### Phase 2: 核心运行时 (已完成设计)
-1. ✅ Reconciler (Fiber 架构)
-2. ✅ Flexbox 布局引擎
-3. ✅ 终端渲染器
-
-### Phase 3: 组件与 API (已完成设计)
-1. ✅ 内置组件
-2. ✅ Hooks API
-3. 🔄 事件处理 (待细化)
-
-### Phase 4: 工具链完善
-1. ✅ VSCode 插件
-2. ✅ LSP Server
-3. ✅ GoLand 插件
-4. 🔜 调试支持
-
-### Phase 5: 实现与测试
-1. ✅ 编译器实现
-2. ✅ 运行时实现
-3. ✅ 测试用例对比
+| 模块 | 设计 | 实现 | 测试 |
+|-----|------|------|------|
+| gox-compiler | ✅ | ✅ | ✅ |
+| reconciler | ✅ | ✅ | ✅ |
+| layout | ✅ | ✅ | ✅ |
+| renderer | ✅ | ✅ | ✅ |
+| components | ✅ | ✅ | ✅ |
+| hooks | ✅ | ✅ | ✅ |
 
 ---
-
-## 关键设计决策
-
-| 决策 | 选择 | 理由 |
-|-----|------|------|
-| JSX 支持 | 预处理器 | 零运行时开销，编译时类型检查 |
-| Flexbox | Go 核心子集实现 | 终端场景可简化 30-40% |
-| 渲染策略 | 增量渲染 | 复刻 Ink 核心魔法 |
-| 终端抽象 | tcell | 跨平台兼容性 |
-| 协调器 | Fiber 架构 | 与 React 一致 |
-
----
-
-## 原版参考
-
-- `reference/react-ink/` - React Ink 原版代码及测试用例
 
 ## 参考项目
 
 - [React Ink](https://github.com/vadimdemedes/ink) - 原始框架
 - [React Reconciler](https://github.com/facebook/react/tree/main/packages/react-reconciler) - 协调器
 - [Yoga Layout](https://github.com/facebook/yoga) - Flexbox 引擎
-- [Templ](https://github.com/a-h/templ) - Go 模板引擎参考
-- [Bubbletea](https://github.com/charmbracelet/bubbletea) - Go TUI 参考
