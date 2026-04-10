@@ -686,3 +686,179 @@ renderer/
    - 脏标记
    - 补丁排序
    - 批量输出
+
+---
+
+## 备用屏幕缓冲
+
+### 概述
+
+使用 ANSI 备用屏幕缓冲区，TUI 运行时在独立屏幕上渲染，退出后恢复原终端内容。
+
+### ANSI 序列
+
+```go
+const (
+    // 启用备用屏幕缓冲
+    ANSIEnableAlternateScreen  = "\x1b[?1049h"
+    
+    // 禁用备用屏幕缓冲 (恢复原屏幕)
+    ANSIDisableAlternateScreen = "\x1b[?1049l"
+)
+```
+
+### 实现
+
+```go
+// Initialize 初始化终端
+func (l *LogUpdate) Initialize() error {
+    if l.initialized {
+        return nil
+    }
+
+    // 启用备用屏幕缓冲
+    if l.alternateScreen {
+        l.stdout.Write([]byte(ANSIEnableAlternateScreen))
+    }
+
+    // 隐藏光标
+    l.stdout.Write([]byte(ANSIHideCursor))
+    // 移动光标到起始位置
+    l.stdout.Write([]byte(ANSIMoveCursorHome))
+
+    l.initialized = true
+    return nil
+}
+
+// Done 完成输出，恢复终端状态
+func (l *LogUpdate) Done() {
+    if !l.initialized {
+        return
+    }
+
+    // 显示光标
+    l.stdout.Write([]byte(ANSIShowCursor))
+
+    // 禁用备用屏幕缓冲
+    if l.alternateScreen {
+        l.stdout.Write([]byte(ANSIDisableAlternateScreen))
+    }
+
+    l.previousOutput = ""
+    l.previousLines = make([]string, 0)
+    l.initialized = false
+}
+```
+
+### 优势
+
+1. **无闪烁**: TUI 在独立屏幕渲染，不影响原终端
+2. **自动恢复**: 退出后原终端内容自动恢复
+3. **滚动隔离**: TUI 滚动不影响原终端滚动位置
+
+---
+
+## TTY 检测
+
+### 概述
+
+自动检测 stdout 是否为终端，根据环境智能切换模式。
+
+### 实现
+
+```go
+// IsTerminal 检查文件描述符是否为终端 (TTY)
+func IsTerminal(file *os.File) bool {
+    if file == nil {
+        return false
+    }
+
+    // 获取文件信息
+    fi, err := file.Stat()
+    if err != nil {
+        return false
+    }
+
+    // 检查是否为字符设备 (终端)
+    return (fi.Mode() & os.ModeCharDevice) != 0
+}
+
+// IsStdoutTerminal 检查 stdout 是否为终端
+func IsStdoutTerminal() bool {
+    return IsTerminal(os.Stdout)
+}
+```
+
+### 行为
+
+| 环境 | TTY 检测 | 交互模式 | 渲染模式 |
+|-----|---------|---------|---------|
+| 终端 | true | 启用 | 增量渲染 |
+| 管道 `|` | false | 禁用 | 直接输出 |
+| 重定向 `>` | false | 禁用 | 直接输出 |
+| CI 环境 | false | 禁用 | 直接输出 |
+
+### 自动检测
+
+```go
+// NewInk 创建新的 Ink 实例
+func NewInk(opts *RenderOptions) *Ink {
+    opts = applyDefaults(opts)
+
+    // 自动检测 TTY
+    if opts.Interactive && opts.Stdout != nil {
+        if f, ok := opts.Stdout.(*os.File); ok {
+            if !IsTerminal(f) {
+                opts.Interactive = false
+            }
+        }
+    }
+
+    // ...
+}
+```
+
+---
+
+## 信号处理
+
+### 概述
+
+内置信号处理，支持 Ctrl+C 可靠退出。
+
+### 实现
+
+```go
+// handleSignals 处理信号
+func (ink *Ink) handleSignals() {
+    sigChan := make(chan os.Signal, 1)
+    signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+
+    for {
+        select {
+        case sig := <-sigChan:
+            if sig == syscall.SIGINT || sig == syscall.SIGTERM {
+                ink.Unmount()
+                return
+            }
+        case <-ink.doneChan:
+            return
+        }
+    }
+}
+```
+
+### 配置
+
+```go
+opts := &ink.RenderOptions{
+    ExitOnCtrlC: true, // 默认启用
+}
+```
+
+### 行为
+
+| 信号 | 行为 |
+|-----|------|
+| SIGINT (Ctrl+C) | 调用 Unmount()，清理资源，退出 |
+| SIGTERM | 调用 Unmount()，清理资源，退出 |

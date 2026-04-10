@@ -56,12 +56,76 @@
 
 | 模块 | 功能 | 状态 |
 |-----|------|------|
-| gox-compiler | JSX → Go 预编译器 | 设计完成 |
-| reconciler | React Fiber 协调器 | 待设计 |
-| layout | Flexbox 布局引擎 | 待设计 |
-| renderer | 终端渲染器 | 待设计 |
-| components | 内置组件 (Box, Text, etc.) | 待设计 |
-| hooks | React Hooks 复刻 | 待设计 |
+| gox-compiler | JSX → Go 预编译器 | ✅ 完成 |
+| reconciler | React Fiber 协调器 | ✅ 完成 |
+| layout | Flexbox 布局引擎 | ✅ 完成 |
+| renderer | 终端渲染器 | ✅ 完成 |
+| components | 内置组件 (Box, Text, etc.) | ✅ 完成 |
+| hooks | React Hooks 复刻 | ✅ 完成 |
+
+---
+
+## 核心技术特性
+
+### 1. 备用屏幕缓冲 (Alternate Screen Buffer)
+
+使用 ANSI `\x1b[?1049h` 启用备用屏幕，`\x1b[?1049l` 恢复原屏幕。
+
+**优势**:
+- TUI 运行时不影响原终端内容
+- 退出后自动恢复原终端状态
+- 消除滚动闪烁
+
+**配置**:
+```go
+opts := &ink.RenderOptions{
+    AlternateScreen: true, // 启用备用屏幕
+}
+```
+
+### 2. TTY 检测
+
+自动检测 stdout 是否为终端，非终端时禁用交互模式。
+
+**实现**:
+```go
+// 检测文件描述符是否为终端
+func IsTerminal(file *os.File) bool {
+    fi, _ := file.Stat()
+    return (fi.Mode() & os.ModeCharDevice) != 0
+}
+```
+
+**行为**:
+- 终端: 启用交互模式、增量渲染
+- 管道/重定向: 禁用交互模式，直接输出
+
+### 3. 信号处理
+
+内置 SIGINT/SIGTERM 处理，Ctrl+C 可靠退出。
+
+**配置**:
+```go
+opts := &ink.RenderOptions{
+    ExitOnCtrlC: true, // 默认启用
+}
+```
+
+### 4. 增量渲染
+
+只更新变化的行，最小化终端输出。
+
+**实现**:
+- 双缓冲对比 (Previous vs Current)
+- 逐行差异计算
+- ANSI 序列优化
+
+**配置**:
+```go
+opts := &ink.RenderOptions{
+    IncrementalRendering: true, // 默认启用
+}
+```
 
 ---
 

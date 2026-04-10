@@ -68,6 +68,55 @@ func Counter() Element {
 - ANSI 兼容处理
 - 信号处理
 
+### CAP-006: 备用屏幕缓冲
+
+**描述**: 使用备用屏幕缓冲区，TUI 不影响原终端内容
+
+**功能**:
+- ANSI `\x1b[?1049h` 启用备用屏幕
+- ANSI `\x1b[?1049l` 恢复原屏幕
+- 退出后自动恢复终端状态
+
+**配置**:
+```go
+opts := &ink.RenderOptions{
+    AlternateScreen: true,
+}
+```
+
+### CAP-007: TTY 检测
+
+**描述**: 自动检测终端环境，智能切换模式
+
+**功能**:
+- 检测 stdout 是否为 TTY
+- 非终端时禁用交互模式
+- 管道/重定向时直接输出
+
+**实现**:
+```go
+func IsTerminal(file *os.File) bool {
+    fi, _ := file.Stat()
+    return (fi.Mode() & os.ModeCharDevice) != 0
+}
+```
+
+### CAP-008: 信号处理
+
+**描述**: 内置信号处理，友好退出程序
+
+**功能**:
+- SIGINT (Ctrl+C) 处理
+- SIGTERM 处理
+- 自动清理资源
+
+**配置**:
+```go
+opts := &ink.RenderOptions{
+    ExitOnCtrlC: true, // 默认启用
+}
+```
+
 ## API Specification
 
 ### 组件 API
@@ -133,8 +182,14 @@ func useInput(handler func(InputEvent))
 | useEffect | ✅ | ✅ | 兼容 |
 | useInput | ✅ | ✅ | 兼容 |
 | useApp | ✅ | ✅ | 兼容 |
+| useFocus | ✅ | ✅ | 兼容 |
+| useAnimation | ✅ | ✅ | 兼容 |
 | Flexbox | ✅ | ✅ | 兼容 |
 | 增量渲染 | ✅ | ✅ | 兼容 |
+| 备用屏幕缓冲 | ✅ | ✅ | 兼容 |
+| TTY 检测 | ✅ | ✅ | 兼容 |
+| 信号处理 | ✅ | ✅ | 兼容 |
+| 交互模式自动检测 | ✅ | ✅ | 兼容 |
 
 ## Performance
 
