@@ -6,8 +6,15 @@ import (
 	"time"
 
 	"github.com/ayanmw/go-react-ink/pkg/hooks"
-	"github.com/ayanmw/go-react-ink/pkg/ink"
 )
+
+// AnimationSubscriber 动画订阅者接口
+type AnimationSubscriber interface {
+	GetFps() int
+	GetLastTick() time.Time
+	SetLastTick(time.Time)
+	GetCallback() func(int)
+}
 
 // AnimationController 动画控制器
 // 与渲染循环集成的动画系统
@@ -16,8 +23,40 @@ type AnimationController struct {
 	isPlaying bool
 	fps       int
 	lastTick  time.Time
-	subscriber *ink.AnimationSubscriber
 	mu        sync.Mutex
+}
+
+// IAnimationSubscriber 用于外部获取信息的接口
+type IAnimationSubscriber struct {
+	controller *AnimationController
+}
+
+// GetFps 获取 FPS
+func (s *IAnimationSubscriber) GetFps() int {
+	return s.controller.fps
+}
+
+// GetLastTick 获取最后时间
+func (s *IAnimationSubscriber) GetLastTick() time.Time {
+	s.controller.mu.Lock()
+	defer s.controller.mu.Unlock()
+	return s.controller.lastTick
+}
+
+// SetLastTick 设置最后时间
+func (s *IAnimationSubscriber) SetLastTick(t time.Time) {
+	s.controller.mu.Lock()
+	defer s.controller.mu.Unlock()
+	s.controller.lastTick = t
+}
+
+// GetCallback 获取回调
+func (s *IAnimationSubscriber) GetCallback() func(int) {
+	return func(frame int) {
+		s.controller.mu.Lock()
+		s.controller.frame = frame
+		s.controller.mu.Unlock()
+	}
 }
 
 // animationRegistry 动画注册表
@@ -103,25 +142,6 @@ func (a *AnimationController) NextFrame() {
 
 // registerWithManager 注册到动画管理器
 func (a *AnimationController) registerWithManager() {
-	instance := ink.GetCurrentInstance()
-	if instance == nil {
-		return
-	}
-
-	// 创建订阅者
-	a.subscriber = &ink.AnimationSubscriber{
-		Fps:       a.fps,
-		LastTick:  time.Now(),
-		IsPlaying: true,
-		Callback: func(frame int) {
-			a.mu.Lock()
-			a.frame = frame
-			a.mu.Unlock()
-		},
-	}
-
-	// 获取动画管理器并注册
-	// 注意：这里需要 Ink 实例暴露 AnimationManager
 	// 简化实现：使用全局注册表
 	animationRegistry.mu.Lock()
 	animationRegistry.subscribers = append(animationRegistry.subscribers, a)

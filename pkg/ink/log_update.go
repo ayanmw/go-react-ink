@@ -14,14 +14,16 @@ type LogUpdate struct {
 	previousLines   []string
 	initialized     bool
 	incremental     bool // 增量渲染模式
+	alternateScreen bool // 备用屏幕缓冲模式
 }
 
 // NewLogUpdate 创建新的输出管理器
-func NewLogUpdate(stdout io.Writer) *LogUpdate {
+func NewLogUpdate(stdout io.Writer, incremental bool, alternateScreen bool) *LogUpdate {
 	return &LogUpdate{
-		stdout:      stdout,
-		previousLines: make([]string, 0),
-		incremental: true, // 默认启用增量渲染
+		stdout:          stdout,
+		previousLines:   make([]string, 0),
+		incremental:     incremental,
+		alternateScreen: alternateScreen,
 	}
 }
 
@@ -34,6 +36,11 @@ func (l *LogUpdate) SetIncremental(enabled bool) {
 func (l *LogUpdate) Initialize() error {
 	if l.initialized {
 		return nil
+	}
+
+	// 启用备用屏幕缓冲
+	if l.alternateScreen {
+		l.stdout.Write([]byte(ANSIEnableAlternateScreen))
 	}
 
 	// 隐藏光标
@@ -53,6 +60,11 @@ func (l *LogUpdate) Done() {
 
 	// 显示光标
 	l.stdout.Write([]byte(ANSIShowCursor))
+
+	// 禁用备用屏幕缓冲
+	if l.alternateScreen {
+		l.stdout.Write([]byte(ANSIDisableAlternateScreen))
+	}
 
 	l.previousOutput = ""
 	l.previousLines = make([]string, 0)

@@ -81,7 +81,7 @@ func TestFrameDuration(t *testing.T) {
 
 func TestLogUpdate(t *testing.T) {
 	var buf bytes.Buffer
-	log := NewLogUpdate(&buf)
+	log := NewLogUpdate(&buf, true, false)
 
 	// Test initialize
 	err := log.Initialize()
@@ -113,7 +113,7 @@ func TestLogUpdate(t *testing.T) {
 
 func TestLogUpdateClear(t *testing.T) {
 	var buf bytes.Buffer
-	log := NewLogUpdate(&buf)
+	log := NewLogUpdate(&buf, true, false)
 
 	// Initialize
 	log.Initialize()

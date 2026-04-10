@@ -11,6 +11,7 @@ import (
 	"github.com/ayanmw/go-react-ink/pkg/core"
 	"github.com/ayanmw/go-react-ink/pkg/fiber"
 	"github.com/ayanmw/go-react-ink/pkg/hooks"
+	_ "github.com/ayanmw/go-react-ink/pkg/input"
 )
 
 // Ink 应用实例
@@ -120,10 +121,20 @@ func (m *AnimationManager) HasActiveAnimations() bool {
 func NewInk(opts *RenderOptions) *Ink {
 	opts = applyDefaults(opts)
 
+	// 自动检测 TTY：如果 stdout 不是终端且 Interactive 为默认值，则禁用交互模式
+	if opts.Interactive && opts.Stdout != nil {
+		// 检查是否为 TTY
+		if f, ok := opts.Stdout.(*os.File); ok {
+			if !IsTerminal(f) {
+				opts.Interactive = false
+			}
+		}
+	}
+
 	return &Ink{
 		options:          opts,
 		scheduler:        fiber.NewScheduler(),
-		log:              NewLogUpdate(opts.Stdout),
+		log:              NewLogUpdate(opts.Stdout, opts.IncrementalRendering, opts.AlternateScreen),
 		animationManager: NewAnimationManager(),
 		exitChan:         make(chan any, 1),
 		renderChan:       make(chan struct{}, 1),
@@ -272,13 +283,16 @@ func (ink *Ink) handleSignals() {
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 
-	select {
-	case sig := <-sigChan:
-		if sig == syscall.SIGINT {
-			ink.Unmount()
+	for {
+		select {
+		case sig := <-sigChan:
+			if sig == syscall.SIGINT || sig == syscall.SIGTERM {
+				ink.Unmount()
+				return
+			}
+		case <-ink.doneChan:
+			return
 		}
-	case <-ink.doneChan:
-		return
 	}
 }
 

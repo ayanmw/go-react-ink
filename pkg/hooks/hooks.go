@@ -7,10 +7,11 @@ import (
 
 // HookContext Hook 上下文
 type HookContext struct {
-	mu         sync.Mutex
-	hookIndex  int
-	hooks      []any
-	dispatcher Dispatcher
+	mu          sync.Mutex
+	hookIndex   int
+	hooks       []any
+	dispatcher  Dispatcher
+	appContext  *AppContext
 }
 
 // Hook Hook 接口
@@ -62,6 +63,13 @@ func (c *HookContext) scheduleUpdate() {
 	if d != nil {
 		d.ScheduleUpdate()
 	}
+}
+
+// SetAppContext 设置应用上下文
+func (c *HookContext) SetAppContext(appCtx *AppContext) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.appContext = appCtx
 }
 
 // StateHook State Hook

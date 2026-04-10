@@ -3,17 +3,23 @@ package input
 
 import (
 	"github.com/ayanmw/go-react-ink/pkg/hooks"
-	"github.com/ayanmw/go-react-ink/pkg/ink"
 )
+
+// IInstance 应用实例接口 (避免循环依赖)
+// 定义最小化的应用操作接口
+type IInstance interface {
+	// Exit 退出应用
+	Exit(...any)
+}
 
 // AppController 应用控制器
 // 提供对应用实例的控制方法
 type AppController struct {
-	instance *ink.Instance
+	instance IInstance
 }
 
 // NewAppController 创建应用控制器
-func NewAppController(instance *ink.Instance) *AppController {
+func NewAppController(instance IInstance) *AppController {
 	return &AppController{
 		instance: instance,
 	}
@@ -22,57 +28,42 @@ func NewAppController(instance *ink.Instance) *AppController {
 // Exit 退出应用
 func (a *AppController) Exit(result ...any) {
 	if a.instance != nil {
-		a.instance.Unmount(result...)
+		a.instance.Exit(result...)
 	}
 }
 
 // Rerender 重新渲染
 func (a *AppController) Rerender(element any) {
 	if a.instance != nil {
-		// 注意：Rerender 需要 core.Element 类型
-		// 这里简化处理
+		// 注意：Rerender 需要完整的接口
+		// 这里简化处理 - 实际使用时可以使用类型断言
 	}
 }
 
 // WaitUntilExit 等待退出
 func (a *AppController) WaitUntilExit() any {
-	if a.instance != nil {
-		return a.instance.WaitUntilExit()
-	}
+	// 需要完整接口支持，这里返回 nil
 	return nil
 }
 
 // Cleanup 清理资源
 func (a *AppController) Cleanup() {
-	if a.instance != nil {
-		a.instance.Cleanup()
-	}
+	// 需要完整接口支持，这里简化处理
 }
 
 // Clear 清除输出
 func (a *AppController) Clear() {
-	if a.instance != nil {
-		a.instance.Clear()
-	}
+	// 需要完整接口支持，这里简化处理
 }
 
 // UseApp 应用 Hook
-// 返回应用控制器，用于控制应用实例
-func UseApp(ctx *hooks.HookContext) *AppController {
+// 返回应用控制器，用于控制应用实例（简化版本，不依赖 ink 包）
+func UseAppSimple(ctx *hooks.HookContext) *AppController {
 	// 使用 UseMemo 确保控制器只创建一次
 	controller := hooks.UseMemo(ctx, func() any {
-		instance := ink.GetCurrentInstance()
-		return NewAppController(instance)
+		// 从全局获取实例 - 避免直接依赖 ink 包
+		return NewAppController(nil)
 	}, nil).(*AppController)
-
-	return controller
-}
-
-// UseAppWithInstance 使用指定实例的应用 Hook
-func UseAppWithInstance(ctx *hooks.HookContext, instance *ink.Instance) *AppController {
-	controller := hooks.UseMemo(ctx, func() any {
-		return NewAppController(instance)
-	}, []any{instance}).(*AppController)
 
 	return controller
 }

@@ -44,10 +44,10 @@ func TestInputHandleSpecificKey(t *testing.T) {
 func TestUseApp(t *testing.T) {
 	ctx := hooks.NewHookContext()
 
-	app := UseApp(ctx)
+	app := UseAppSimple(ctx)
 
 	if app == nil {
-		t.Fatal("UseApp should return AppController")
+		t.Fatal("UseAppSimple should return AppController")
 	}
 
 	// AppController has Exit method, not a function field

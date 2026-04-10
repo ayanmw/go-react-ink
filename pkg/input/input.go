@@ -2,9 +2,8 @@
 package input
 
 import (
-	"sync"
-
 	"github.com/ayanmw/go-react-ink/pkg/hooks"
+	"sync"
 )
 
 // Key 输入键

@@ -29,6 +29,9 @@ type RenderOptions struct {
 
 	// AlternateScreen 是否使用备用屏幕缓冲
 	AlternateScreen bool
+
+	// IncrementalRendering 是否启用增量渲染 (默认: true)
+	IncrementalRendering bool
 }
 
 // DefaultRenderOptions 默认渲染选项
@@ -39,8 +42,9 @@ func DefaultRenderOptions() *RenderOptions {
 		ExitOnCtrlC:     true,
 		MaxFps:          30,
 		PatchConsole:    false,
-		Interactive:     true,
-		AlternateScreen: false,
+		Interactive:           true,
+		AlternateScreen:       false,
+		IncrementalRendering:  true,
 	}
 }
 
@@ -60,6 +64,10 @@ func applyDefaults(opts *RenderOptions) *RenderOptions {
 	if opts.MaxFps <= 0 {
 		opts.MaxFps = 30
 	}
+
+	// 自动检测 TTY：如果 stdout 是终端且未显式设置 Interactive，则启用交互模式
+	// 注意：这里无法区分"未设置"和"设置为false"，所以只在默认情况下检测
+	// 用户可以通过显式设置 Interactive: false 来禁用
 
 	return opts
 }
